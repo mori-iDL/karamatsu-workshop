@@ -570,10 +570,10 @@
             <button class="btn-download" onclick="downloadImage()">📸 画像保存</button>
         </div>
         
-        <!-- SVGダウンロードセクション -->
+        <!-- ワークショップ参加者用セクション -->
         <div class="download-section">
-            <h3>🎯 レーザー加工用データのダウンロード</h3>
-            <p>気に入った図柄をクリックして選択し、パラメータを調整したら、下のボタンでSVGファイルをダウンロードしてください。</p>
+            <h3>🎨 デザイン選択・パラメータ調整</h3>
+            <p>気に入った図柄をクリックして選択し、パラメータを調整してデザインを確認してください。</p>
             
             <div class="selected-stage-info" id="selected-info">
                 <h4>選択中：<span id="selected-stage-name">ステージを選択してください</span></h4>
@@ -584,12 +584,18 @@
                 </div>
             </div>
             
-            <button class="btn-svg-download" onclick="downloadSVG()" id="svg-download-btn">
-                📥 SVGファイルをダウンロード（39mm×39mm）
-            </button>
+            <div style="margin-top: 20px; padding: 20px; background: rgba(255,255,255,0.95); border-radius: 10px; text-align: center;">
+                <h4 style="color: #2c3e50; margin-bottom: 15px;">📱 ワークショップ当日の流れ</h4>
+                <div style="text-align: left; color: #2c3e50; font-size: 14px; line-height: 1.6;">
+                    <p>1️⃣ ステージを選択してデザインを確認</p>
+                    <p>2️⃣ パラメータを調整して気に入ったデザインを作成</p>
+                    <p>3️⃣ 講師がSVGデータを生成・レーザー加工</p>
+                    <p>4️⃣ 完成した唐松ブロックをお持ち帰り</p>
+                </div>
+            </div>
             
             <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.3);">
-                <p style="font-size: 16px; margin-bottom: 15px; font-weight: 600;">📝 ダウンロード後は、Google Formsから提出してください</p>
+                <p style="font-size: 16px; margin-bottom: 15px; font-weight: 600;">📝 デザイン提出はこちらから</p>
                 <button class="btn-svg-download" onclick="openGoogleForms()" style="background: #27ae60;">
                     📋 Google Formsを開く
                 </button>
@@ -3810,6 +3816,11 @@
         
         // 9. 未来 - 循環の宇宙スケール（種子から銀河へ）統合版
         function drawFuture(ctx, center, gp, on, weight) {
+            // === キャンバスのクリッピング範囲を設定 ===
+            // キャンバスサイズ280x280、中心140なので、安全範囲は中心から±115
+            const canvasSize = 280;
+            const maxRadius = 115; // 中心からの最大距離
+            
             // === 時間による物語の変化 ===
             // weight < 1: Stage 8の種子から広がり始める（過去）
             // weight = 1: 銀河として完全展開（現在）
@@ -3863,17 +3874,20 @@
                 for (let i = 0; i <= points; i++) {
                     const t = i / points;
                     const angle = armAngleOffset + t * Math.PI * (5 + gpDynamic * 5);
-                    const radius = t * (70 + gpDynamic * 70) * expansionProgress;
+                    const radius = t * (50 + gpDynamic * 50) * expansionProgress; // 70→50に削減
                     
-                    // 対数螺旋（黄金比）
-                    const r = radius * Math.exp(spiralTightness * (angle - armAngleOffset) / phi);
+                    // 対数螺旋（黄金比）- 半径を制限
+                    let r = radius * Math.exp(spiralTightness * (angle - armAngleOffset) / phi);
+                    r = Math.min(r, maxRadius * 0.95); // 最大半径を制限
+                    
                     const noise = perlin.get(
                         Math.cos(angle) * arm * 0.3 + noiseOffset,
                         Math.sin(angle) * arm * 0.3
-                    ) * on * (10 + gpDynamic * 15);
+                    ) * on * (8 + gpDynamic * 10); // ノイズも削減
                     
-                    const x = center + (r + noise) * Math.cos(angle);
-                    const y = center + (r + noise) * Math.sin(angle);
+                    const finalR = Math.min(r + noise, maxRadius); // 最終半径を制限
+                    const x = center + finalR * Math.cos(angle);
+                    const y = center + finalR * Math.sin(angle);
                     
                     if (i === 0) ctx.moveTo(x, y);
                     else ctx.lineTo(x, y);
@@ -3889,13 +3903,13 @@
                 
                 for (let n = 0; n < numNebulae; n++) {
                     const nebulaAngle = (n / numNebulae) * Math.PI * 2 + goldenAngle * n;
-                    const nebulaDist = 50 + Math.random() * 60 * expansionProgress;
+                    const nebulaDist = Math.min(40 + Math.random() * 50 * expansionProgress, maxRadius * 0.7); // 制限
                     const nebulaX = center + nebulaDist * Math.cos(nebulaAngle);
                     const nebulaY = center + nebulaDist * Math.sin(nebulaAngle);
                     
                     // 星雲の雲状構造
                     const cloudPoints = Math.floor(30 + gpDynamic * 80);
-                    const nebulaSize = 15 + gpDynamic * 35;
+                    const nebulaSize = Math.min(15 + gpDynamic * 25, 30); // サイズ制限
                     
                     for (let p = 0; p < cloudPoints; p++) {
                         const cloudAngle = (p / cloudPoints) * Math.PI * 2;
@@ -3929,27 +3943,31 @@
                 let x, y;
                 
                 if (useFibonacci) {
-                    // フィボナッチ配置（中心から放射）
+                    // フィボナッチ配置（中心から放射）- 半径を制限
                     const angle = i * goldenAngle;
-                    const radius = Math.sqrt(i) * (8 + gpDynamic * 12) * expansionProgress;
-                    const scatter = (Math.random() - 0.5) * 15 * on;
+                    let radius = Math.sqrt(i) * (6 + gpDynamic * 8) * expansionProgress; // 削減
+                    radius = Math.min(radius, maxRadius * 0.9); // 制限
+                    const scatter = (Math.random() - 0.5) * 10 * on; // 削減
                     
-                    x = center + (radius + scatter) * Math.cos(angle);
-                    y = center + (radius + scatter) * Math.sin(angle);
+                    const finalR = Math.min(radius + scatter, maxRadius);
+                    x = center + finalR * Math.cos(angle);
+                    y = center + finalR * Math.sin(angle);
                 } else {
-                    // 銀河の腕に沿った配置
+                    // 銀河の腕に沿った配置 - 半径を制限
                     const armIndex = i % galaxyArms;
                     const t = (i / starDensity);
                     const angle = (armIndex / galaxyArms) * Math.PI * 2 + t * Math.PI * (5 + gpDynamic * 5);
                     const spiralTightness = 0.18 + gpDynamic * 0.5;
-                    const radius = t * (70 + gpDynamic * 70) * expansionProgress;
-                    const r = radius * Math.exp(spiralTightness * angle / phi);
+                    const radius = t * (50 + gpDynamic * 50) * expansionProgress; // 削減
+                    let r = radius * Math.exp(spiralTightness * angle / phi);
+                    r = Math.min(r, maxRadius * 0.9); // 制限
                     
-                    const scatter = (Math.random() - 0.5) * (25 + on * 35) * scale;
+                    const scatter = (Math.random() - 0.5) * (15 + on * 20); // 削減
                     const scatterAngle = Math.random() * Math.PI * 2;
                     
-                    x = center + r * Math.cos(angle) + scatter * Math.cos(scatterAngle);
-                    y = center + r * Math.sin(angle) + scatter * Math.sin(scatterAngle);
+                    const finalR = Math.min(r + scatter, maxRadius);
+                    x = center + finalR * Math.cos(angle + scatterAngle);
+                    y = center + finalR * Math.sin(angle + scatterAngle);
                 }
                 
                 // 星のサイズ（新しい種子）
@@ -4059,7 +4077,7 @@
                 
                 for (let i = 0; i < newGalaxies; i++) {
                     const angle = i * goldenAngle * 2;
-                    const distance = 100 + newBirthProgress * 20;
+                    const distance = Math.min(80 + newBirthProgress * 15, maxRadius * 0.85); // 制限
                     const gx = center + distance * Math.cos(angle);
                     const gy = center + distance * Math.sin(angle);
                     
@@ -4103,8 +4121,8 @@
                 for (let i = 0; i < numConnections; i++) {
                     const angle1 = i * goldenAngle * 1.5;
                     const angle2 = (i + 3) * goldenAngle * 1.5;
-                    const dist1 = 30 + (i / numConnections) * 90 * expansionProgress;
-                    const dist2 = 30 + ((i + 3) / numConnections) * 90 * expansionProgress;
+                    const dist1 = Math.min(30 + (i / numConnections) * 70 * expansionProgress, maxRadius * 0.8); // 制限
+                    const dist2 = Math.min(30 + ((i + 3) / numConnections) * 70 * expansionProgress, maxRadius * 0.8); // 制限
                     
                     const x1 = center + dist1 * Math.cos(angle1);
                     const y1 = center + dist1 * Math.sin(angle1);
@@ -4135,7 +4153,7 @@
                 
                 for (let s = 0; s < numSaplings; s++) {
                     const saplingAngle = s * goldenAngle * 2;
-                    const saplingDist = 60 + (s / numSaplings) * 70 * expansionProgress;
+                    const saplingDist = Math.min(50 + (s / numSaplings) * 55 * expansionProgress, maxRadius * 0.8); // 制限
                     const sx = center + saplingDist * Math.cos(saplingAngle);
                     const sy = center + saplingDist * Math.sin(saplingAngle);
                     
@@ -4174,7 +4192,7 @@
                 
                 for (let w = 0; w < numWaves; w++) {
                     const waveAngle = (w / numWaves) * Math.PI * 2;
-                    const waveRadius = 40 + w * (8 + gpDynamic * 10) * expansionProgress;
+                    const waveRadius = Math.min(35 + w * (6 + gpDynamic * 8) * expansionProgress, maxRadius * 0.85); // 制限
                     
                     ctx.strokeStyle = `rgba(0, 0, 0, ${0.08 + Math.random() * 0.12})`;
                     ctx.lineWidth = 0.2 + gpDynamic * 0.4;
@@ -4207,7 +4225,7 @@
             
             for (let v = 0; v < miniVortexes; v++) {
                 const vortexAngle = (v / Math.max(1, miniVortexes)) * Math.PI * 2;
-                const vortexDist = (40 + Math.random() * 30) * scale;
+                const vortexDist = Math.min((35 + Math.random() * 25), maxRadius * 0.6); // 制限
                 const vx = center + vortexDist * Math.cos(vortexAngle);
                 const vy = center + vortexDist * Math.sin(vortexAngle);
                 
@@ -4250,16 +4268,18 @@
                     for (let sp = 0; sp <= spiralPoints; sp++) {
                         const t = sp / spiralPoints;
                         const angle = spiralBaseAngle + t * Math.PI * (4 + gpDynamic * 3);
-                        const radius = t * (50 + gpDynamic * 40) * expansionProgress;
-                        const r = radius * Math.exp(spiralTightness * angle);
+                        const radius = t * (40 + gpDynamic * 35) * expansionProgress; // 削減
+                        let r = radius * Math.exp(spiralTightness * angle);
+                        r = Math.min(r, maxRadius * 0.9); // 制限
                         
                         const spiralNoise = perlin.get(
                             Math.cos(angle) * ms * 0.3 + noiseOffset * 1.5,
                             Math.sin(angle) * ms * 0.3
-                        ) * on * 8;
+                        ) * on * 6; // 削減
                         
-                        const px = center + (r + spiralNoise) * Math.cos(angle);
-                        const py = center + (r + spiralNoise) * Math.sin(angle);
+                        const finalR = Math.min(r + spiralNoise, maxRadius);
+                        const px = center + finalR * Math.cos(angle);
+                        const py = center + finalR * Math.sin(angle);
                         
                         if (sp === 0) ctx.moveTo(px, py);
                         else ctx.lineTo(px, py);
@@ -4278,8 +4298,8 @@
                 for (let i = 0; i < connections; i++) {
                     const angle1 = Math.random() * Math.PI * 2;
                     const angle2 = Math.random() * Math.PI * 2;
-                    const dist1 = 20 + Math.random() * (100 * scale * expansionProgress);
-                    const dist2 = 20 + Math.random() * (100 * scale * expansionProgress);
+                    const dist1 = Math.min(20 + Math.random() * (80 * expansionProgress), maxRadius * 0.85); // 制限
+                    const dist2 = Math.min(20 + Math.random() * (80 * expansionProgress), maxRadius * 0.85); // 制限
                     
                     const x1 = center + dist1 * Math.cos(angle1);
                     const y1 = center + dist1 * Math.sin(angle1);
