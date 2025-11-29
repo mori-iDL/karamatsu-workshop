@@ -123,6 +123,7 @@
             background: #ecf0f1;
             outline: none;
             -webkit-appearance: none;
+            appearance: none;
         }
         
         input[type="range"]::-webkit-slider-thumb {
@@ -153,6 +154,243 @@
             border-radius: 12px;
             margin-bottom: 30px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        /* === 新機能: プリセット・ランダムボタン === */
+        .preset-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .preset-btn {
+            padding: 12px 20px;
+            border: 2px solid #34495e;
+            border-radius: 25px;
+            background: white;
+            color: #34495e;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .preset-btn:hover {
+            background: #34495e;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 73, 94, 0.3);
+        }
+        
+        .preset-btn.active {
+            background: #e74c3c;
+            border-color: #e74c3c;
+            color: white;
+        }
+        
+        .random-btn {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            border-color: #8e44ad;
+            color: white;
+        }
+        
+        .random-btn:hover {
+            background: linear-gradient(135deg, #8e44ad 0%, #7d3c98 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(142, 68, 173, 0.4);
+        }
+        
+        /* === 新機能: パラメータ説明ツールチップ === */
+        .param-help {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: #bdc3c7;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 8px;
+            transition: all 0.3s;
+        }
+        
+        .param-help:hover {
+            background: #3498db;
+            transform: scale(1.1);
+        }
+        
+        .tooltip {
+            display: none;
+            position: absolute;
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.6;
+            max-width: 300px;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            left: 50%;
+            transform: translateX(-50%);
+            top: 100%;
+            margin-top: 10px;
+        }
+        
+        .tooltip::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 8px 8px 8px;
+            border-style: solid;
+            border-color: transparent transparent #2c3e50 transparent;
+        }
+        
+        .tooltip.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        
+        /* === 新機能: 選択中ステージの強調表示 === */
+        .cell.selected {
+            border: 4px solid #e74c3c;
+            box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.3), 0 8px 25px rgba(231, 76, 60, 0.4);
+            transform: scale(1.02);
+        }
+        
+        .cell.selected .cell-label {
+            color: #e74c3c;
+            font-weight: 700;
+        }
+        
+        .cell.selected::after {
+            content: '✓ 選択中';
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: #e74c3c;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        /* === 新機能: スマホ向けタッチ最適化 === */
+        @media (max-width: 768px) {
+            input[type="range"] {
+                height: 12px;
+            }
+            
+            input[type="range"]::-webkit-slider-thumb {
+                width: 36px;
+                height: 36px;
+            }
+            
+            input[type="range"]::-moz-range-thumb {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .control-group {
+                padding: 10px 0;
+            }
+            
+            .preset-btn {
+                padding: 15px 12px;
+                font-size: 13px;
+            }
+            
+            .param-help {
+                width: 28px;
+                height: 28px;
+                line-height: 28px;
+                font-size: 14px;
+            }
+        }
+        
+        /* === 新機能: ビフォーアフター比較 === */
+        .compare-section {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .compare-section h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .compare-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .compare-box {
+            text-align: center;
+        }
+        
+        .compare-box canvas {
+            border: 2px solid #34495e;
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .compare-box p {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+        
+        .compare-arrow {
+            font-size: 30px;
+            color: #e74c3c;
+        }
+        
+        .compare-buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .compare-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .compare-btn.save {
+            background: #3498db;
+            color: white;
+        }
+        
+        .compare-btn.reset {
+            background: #95a5a6;
+            color: white;
         }
         
         .story h2 {
@@ -500,28 +738,71 @@
         </div>
         
         <div class="controls">
-            <div class="control-group">
+            <!-- プリセット・ランダムボタン -->
+            <div class="preset-buttons">
+                <button class="preset-btn" onclick="applyPreset('soft')" id="preset-soft">🌱 やわらかい</button>
+                <button class="preset-btn" onclick="applyPreset('dynamic')" id="preset-dynamic">⚡ ダイナミック</button>
+                <button class="preset-btn" onclick="applyPreset('balance')" id="preset-balance">🎨 バランス</button>
+                <button class="preset-btn random-btn" onclick="applyRandom()">🎲 ランダム</button>
+            </div>
+            
+            <div class="control-group" style="position: relative;">
                 <div class="control-label">
-                    <span>成長の力強さ (風雪に耐える強さ)</span>
+                    <span>成長の力強さ (風雪に耐える強さ)<span class="param-help" onclick="toggleTooltip('growth-tooltip')">?</span></span>
                     <span class="control-value" id="growth-value">70%</span>
+                </div>
+                <div class="tooltip" id="growth-tooltip">
+                    <strong>🌲 成長の力強さとは？</strong><br>
+                    木の成長度合いを変えます。複雑さ、密度、サイズに影響。<br>
+                    <em>→「若々しい木」と「老木」、どちらの物語を描きますか？</em>
                 </div>
                 <input type="range" id="growth-power" min="0" max="100" value="70">
             </div>
             
-            <div class="control-group">
+            <div class="control-group" style="position: relative;">
                 <div class="control-label">
-                    <span>有機性 (自然の不完全性)</span>
+                    <span>有機性 (自然の不完全性)<span class="param-help" onclick="toggleTooltip('organic-tooltip')">?</span></span>
                     <span class="control-value" id="organic-value">60%</span>
+                </div>
+                <div class="tooltip" id="organic-tooltip">
+                    <strong>🌊 有機性とは？</strong><br>
+                    揺らぎやランダムネスの度合いを変えます。低いと整然、高いと野性的に。<br>
+                    <em>→「整然とした森」と「野性的な森」、どちらを想像しますか？</em>
                 </div>
                 <input type="range" id="organic-nature" min="0" max="100" value="60">
             </div>
             
-            <div class="control-group">
+            <div class="control-group" style="position: relative;">
                 <div class="control-label">
-                    <span>時間の流れ (過去 ← → 未来)</span>
+                    <span>時間の流れ (過去 ← → 未来)<span class="param-help" onclick="toggleTooltip('time-tooltip')">?</span></span>
                     <span class="control-value" id="time-value">0</span>
                 </div>
+                <div class="tooltip" id="time-tooltip">
+                    <strong>⏳ 時間の流れとは？</strong><br>
+                    過去・現在・未来のどの時点を強調するかを変えます。<br>
+                    <em>→「種子の記憶」「今の成長」「未来への旅立ち」、どこに焦点を当てますか？</em>
+                </div>
                 <input type="range" id="time-flow" min="-100" max="100" value="0">
+            </div>
+            
+            <!-- ビフォーアフター比較セクション -->
+            <div class="compare-section" id="compare-section" style="display: none;">
+                <h4>📊 ビフォーアフター比較</h4>
+                <div class="compare-container">
+                    <div class="compare-box">
+                        <canvas id="compare-before" width="150" height="150"></canvas>
+                        <p>変更前</p>
+                    </div>
+                    <span class="compare-arrow">→</span>
+                    <div class="compare-box">
+                        <canvas id="compare-after" width="150" height="150"></canvas>
+                        <p>変更後</p>
+                    </div>
+                </div>
+                <div class="compare-buttons">
+                    <button class="compare-btn save" onclick="saveCurrentState()">💾 この状態を記録</button>
+                    <button class="compare-btn reset" onclick="hideCompare()">✕ 閉じる</button>
+                </div>
             </div>
         </div>
         
@@ -566,14 +847,14 @@
         
         <div class="action-buttons">
             <button class="btn-generate" onclick="regenerateAll()">🔄 再生成</button>
-            <button class="btn-save" onclick="saveDesign()">💾 デザイン保存</button>
-            <button class="btn-download" onclick="downloadImage()">📸 画像保存</button>
+            <button class="btn-download" onclick="downloadImage()">📸 全体画像</button>
+            <button class="btn-card" onclick="downloadCardImage()" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);">🎴 カード保存</button>
         </div>
         
-        <!-- ワークショップ参加者用セクション -->
+        <!-- 松森さん用完全版（SVGダウンロード機能付き） -->
         <div class="download-section">
-            <h3>🎨 デザイン選択・パラメータ調整</h3>
-            <p>気に入った図柄をクリックして選択し、パラメータを調整してデザインを確認してください。</p>
+            <h3>🎯 レーザー加工用データのダウンロード</h3>
+            <p>気に入った図柄をクリックして選択し、パラメータを調整したら、下のボタンでSVGファイルをダウンロードしてください。</p>
             
             <div class="selected-stage-info" id="selected-info">
                 <h4>選択中：<span id="selected-stage-name">ステージを選択してください</span></h4>
@@ -584,15 +865,9 @@
                 </div>
             </div>
             
-            <div style="margin-top: 20px; padding: 20px; background: rgba(255,255,255,0.95); border-radius: 10px; text-align: center;">
-                <h4 style="color: #2c3e50; margin-bottom: 15px;">📱 ワークショップ当日の流れ</h4>
-                <div style="text-align: left; color: #2c3e50; font-size: 14px; line-height: 1.6;">
-                    <p>1️⃣ ステージを選択してデザインを確認</p>
-                    <p>2️⃣ パラメータを調整して気に入ったデザインを作成</p>
-                    <p>3️⃣ 講師がSVGデータを生成・レーザー加工</p>
-                    <p>4️⃣ 完成した唐松ブロックをお持ち帰り</p>
-                </div>
-            </div>
+            <button class="btn-svg-download" onclick="downloadSVG()" id="svg-download-btn">
+                📥 SVGファイルをダウンロード（39mm×39mm）
+            </button>
             
             <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.3);">
                 <p style="font-size: 16px; margin-bottom: 15px; font-weight: 600;">📝 デザイン提出はこちらから</p>
@@ -620,6 +895,154 @@
         
         // 選択されたステージを管理
         let selectedStage = null;
+        
+        // ビフォーアフター比較用の状態保存
+        let savedState = null;
+        
+        // ========================================
+        // プリセット機能
+        // ========================================
+        const presets = {
+            soft: { growth: 40, organic: 30, time: -30, name: 'やわらかい' },
+            dynamic: { growth: 90, organic: 80, time: 50, name: 'ダイナミック' },
+            balance: { growth: 70, organic: 60, time: 0, name: 'バランス' }
+        };
+        
+        function applyPreset(presetName) {
+            const preset = presets[presetName];
+            if (!preset) return;
+            
+            // 現在の状態を保存（比較用）
+            saveForCompare();
+            
+            // プリセット値を適用
+            growthPower = preset.growth;
+            organicNature = preset.organic;
+            timeFlow = preset.time;
+            
+            // UIを更新
+            document.getElementById('growth-power').value = growthPower;
+            document.getElementById('organic-nature').value = organicNature;
+            document.getElementById('time-flow').value = timeFlow;
+            
+            document.getElementById('growth-value').textContent = growthPower + '%';
+            document.getElementById('organic-value').textContent = organicNature + '%';
+            document.getElementById('time-value').textContent = timeFlow;
+            
+            // プリセットボタンのアクティブ状態を更新
+            document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('preset-' + presetName)?.classList.add('active');
+            
+            // 再描画
+            generateAllPatterns();
+            updateParamDisplay();
+            
+            // 比較を表示
+            showCompare();
+        }
+        
+        // ========================================
+        // ランダム生成機能
+        // ========================================
+        function applyRandom() {
+            // 現在の状態を保存（比較用）
+            saveForCompare();
+            
+            // ランダム値を生成
+            growthPower = Math.floor(Math.random() * 100);
+            organicNature = Math.floor(Math.random() * 100);
+            timeFlow = Math.floor(Math.random() * 201) - 100; // -100 to 100
+            
+            // UIを更新
+            document.getElementById('growth-power').value = growthPower;
+            document.getElementById('organic-nature').value = organicNature;
+            document.getElementById('time-flow').value = timeFlow;
+            
+            document.getElementById('growth-value').textContent = growthPower + '%';
+            document.getElementById('organic-value').textContent = organicNature + '%';
+            document.getElementById('time-value').textContent = timeFlow;
+            
+            // プリセットボタンのアクティブ状態をクリア
+            document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // 再描画
+            generateAllPatterns();
+            updateParamDisplay();
+            
+            // 比較を表示
+            showCompare();
+        }
+        
+        // ========================================
+        // ツールチップ機能
+        // ========================================
+        function toggleTooltip(tooltipId) {
+            const tooltip = document.getElementById(tooltipId);
+            const isShowing = tooltip.classList.contains('show');
+            
+            // 全てのツールチップを閉じる
+            document.querySelectorAll('.tooltip').forEach(t => t.classList.remove('show'));
+            
+            // クリックしたツールチップをトグル
+            if (!isShowing) {
+                tooltip.classList.add('show');
+            }
+        }
+        
+        // 他の場所をクリックしたらツールチップを閉じる
+        document.addEventListener('click', function(e) {
+            if (!e.target.classList.contains('param-help')) {
+                document.querySelectorAll('.tooltip').forEach(t => t.classList.remove('show'));
+            }
+        });
+        
+        // ========================================
+        // ビフォーアフター比較機能
+        // ========================================
+        function saveForCompare() {
+            if (!selectedStage) return;
+            
+            savedState = {
+                growth: growthPower,
+                organic: organicNature,
+                time: timeFlow,
+                stage: selectedStage
+            };
+            
+            // ビフォーキャンバスに現在の状態を描画
+            const beforeCanvas = document.getElementById('compare-before');
+            const sourceCanvas = document.getElementById(`canvas-${selectedStage}`);
+            if (beforeCanvas && sourceCanvas) {
+                const ctx = beforeCanvas.getContext('2d');
+                ctx.clearRect(0, 0, 150, 150);
+                ctx.drawImage(sourceCanvas, 0, 0, 150, 150);
+            }
+        }
+        
+        function showCompare() {
+            if (!savedState || !selectedStage) return;
+            
+            const compareSection = document.getElementById('compare-section');
+            compareSection.style.display = 'block';
+            
+            // アフターキャンバスに現在の状態を描画
+            const afterCanvas = document.getElementById('compare-after');
+            const sourceCanvas = document.getElementById(`canvas-${selectedStage}`);
+            if (afterCanvas && sourceCanvas) {
+                const ctx = afterCanvas.getContext('2d');
+                ctx.clearRect(0, 0, 150, 150);
+                ctx.drawImage(sourceCanvas, 0, 0, 150, 150);
+            }
+        }
+        
+        function hideCompare() {
+            document.getElementById('compare-section').style.display = 'none';
+        }
+        
+        function saveCurrentState() {
+            saveForCompare();
+            alert('✓ 現在の状態を記録しました');
+        }
         const stageNames = [
             '',
             '1. 種 - 雪に眠る',
@@ -631,6 +1054,94 @@
             '7. 端材 - 残された記憶',
             '8. 再生 - 集う断片',
             '9. 未来 - 無限の循環'
+        ];
+        
+        // 各ステージのアルゴリズム解説
+        const stageAlgorithms = [
+            '', // index 0 is empty
+            'Phyllotaxis (葉序): 黄金角137.5°を用いた螺旋配置',
+            'L-system & Perlin Noise: フラクタル成長と有機的揺らぎ',
+            'Perlin Noise Field: 風のベクトル場と流体シミュレーション',
+            'Concentric Noise: 時間軸方向の同心円ノイズ生成',
+            'Random Walk & Parametric Curve: 確率的な歩行と数式曲線',
+            'Grid System & Wave Function: 規則的グリッドと正弦波合成',
+            'Voronoi Diagram: 空間分割アルゴリズムによる断片化',
+            'Fractal Network: 再帰的な分岐構造によるネットワーク',
+            'Logarithmic Spiral: 対数螺旋と粒子系シミュレーション'
+        ];
+        
+        // 各ステージの物語の情景（完全版・ワークショップ解説資料より）
+        const stageScenes = [
+            '', // index 0 is empty
+            // Stage 1: 種子
+            '盛岡の冬の夜空の下、雪に覆われた大地で、唐松の種子が静かに未来を待つ。凍てつく土の中に、すべての可能性が凝縮されている。',
+            // Stage 2: 芽
+            '地中の暗闇から、光を求めて突き抜ける爆発的なエネルギー。根は複雑に絡み合いながら土壌を保持し、芽は重力に逆らって上昇する。生命の意志がそこにある。',
+            // Stage 3: 若木
+            '北上盆地を吹き抜ける風が、若木の枝を揺らし、森全体が呼吸する。目には見えないが、確かに存在する力—それを感じる能力を、私たちは持っている。',
+            // Stage 4: 成長
+            '春夏秋冬、80年分の気候が樹皮に刻まれていく。豊作の年は太く、冷害の年は細く—木は気候を記憶する生きた記録装置だ。',
+            // Stage 5: 木材
+            '伐採。それは死ではなく、森の生命から、人の暮らしを支える素材（マテリアル）への「役割の変容」です。エネルギーは失われず、形を変えて受け継がれる—これは役割のバトンタッチなのです。',
+            // Stage 6: 加工
+            '職人の手で、家具や道具に生まれ変わる。CNCルーターの精密な軌跡と、手鉋の温かな揺らぎ。グリッドシステム vs ランダムウォーク—デジタルの完璧さと、手仕事の不完全な美しさが共存する。',
+            // Stage 7: 端材
+            '家具にならなかった小さな木片たち。しかしそこにも年輪は宿り、80年の記憶が刻まれている。捨てられるのではなく、新たな価値として再構成されるのを待っている。',
+            // Stage 8: 再生
+            '端材から養分が流れ、土へ還り、新しい種子が生まれる準備が整う。終わりは始まり。死は新しい生命の母。ここに「循環」の本質がある。',
+            // Stage 9: 未来
+            '種子が宇宙へ、銀河へ。螺旋を描きながら広がる無限の可能性。オウムガイの殻、銀河の腕、台風の渦—すべてが同じ形。ミクロとマクロ、過去と未来が一つにつながる。'
+        ];
+        
+        // 各ステージの魔法タグ（ワークショップ解説資料より）
+        const stageMagicTags = [
+            '', // index 0 is empty
+            '黄金角137.5° | フィボナッチ | DNA螺旋 | フラクタル',
+            'L-system | Perlinノイズ | ベジェ曲線',
+            'Perlinノイズフロー | パーティクル',
+            'フーリエ級数 | 同心円波動 | 周期関数',
+            'エネルギーフロー | 幾何学グリッド | フーリエ級数',
+            'ボロノイ図 | Delaunay三角形 | CNCツールパス',
+            '重力シミュレーション | 黄金角螺旋 | ベジェ曲線',
+            '養分フロー | 菌糸ネットワーク | L-system',
+            '対数螺旋 | 黄金比φ | 自己相似形'
+        ];
+        
+        // 各ステージの魔法の説明（完全版・ワークショップ解説資料より）
+        const stageMagicDesc = [
+            '', // index 0 is empty
+            // Stage 1: 種子
+            '自然界で最も効率的な配置パターンである黄金角（137.5°）—ヒマワリの種が美しく並ぶように、限られた空間で最大限の構造を実現するルール。それは38億年の生命進化が見つけた最適解です。黄金比φ（1.618…）は、宇宙の美の法則そのものです。フラクタル（再帰的な自己相似形）により、無限の複雑さを単純なルールから生成します。',
+            // Stage 2: 芽
+            'L-system（リンデンマイヤーシステム）は、植物の成長をシミュレートする文法。「F → F[+F][-F]」のような単純なルールの再帰的な繰り返しから、木の枝や血管のような複雑な構造を生み出します。これは「創発」—部分の総和を超えた全体が現れる瞬間です。Perlinノイズは、ランダムでありながら連続的で自然な揺らぎを実現する数学的手法。',
+            // Stage 3: 若木
+            'ケン・パーリンが発明したノイズ関数は、ランダムでありながら連続的で自然な揺らぎを生成します。各パーティクルがPerlinノイズから取得した角度に従って移動することで、目に見えない風の流れを1000個以上の粒子で可視化。雲、炎、水—流体シミュレーションによって、私たちは「見えないものを見る」力を手に入れました。',
+            // Stage 4: 成長
+            'ジョゼフ・フーリエが発見した「波の重ね合わせ」の原理。複雑な波形も、単純な正弦波（サイン波）の和として表現できる—これは音楽、光、そして時間そのものを記述する数学です。実際の気候データに基づく周期関数を重ね合わせることで、リアルな年輪パターンを生成。年輪は、時間を空間に変換した「データの物質化」なのです。',
+            // Stage 5: 木材
+            '森から街へ、生命エネルギーが移動する。直線的なグリッドは人間の理性と秩序を象徴し、有機的な流れは自然の力を表します。二つの世界が出会う瞬間です。フーリエ級数により、複数周波数の波を重ね合わせて針葉の繊細な波を表現。森と都市をつなぐ生命パルスの伝播。',
+            // Stage 6: 加工
+            'ボロノイ図は、空間を「最も近い点」で分割する幾何学パターン。細胞、キリンの模様、領土の境界線—自然も社会も、この原理で空間を分け合っています。数学は、自然界に潜む秩序を明らかにします。デジタルファブリケーションの本質は、「デザインデータ → 工作機械の動作」への変換。このステージでは、人とマシンの協働を表現。',
+            // Stage 7: 端材
+            '重力に従って舞い落ちる軌跡は、放物線（ベジェ曲線）を描きます。ガリレオが発見した法則—すべての物体は等しく落下する。端材も、完成品も、等しく価値を持つという思想がここにあります。時間を通じた「拡散 → 最大散乱 → 収束」のサイクルを表現。',
+            // Stage 8: 再生
+            '菌類の菌糸ネットワーク（Mycelial Network）は、森の地下で木々をつなぎ、養分を分配する「インターネット」です。分解者は破壊者ではなく、生命の循環を支える協力者。Stage 8はStage 1の種子パターン（Phyllotaxis、DNA螺旋）を中心に再現し、終わりが新しい始まりであることを表現。永遠の循環を数学的に記述します。',
+            // Stage 9: 未来
+            '対数螺旋（Logarithmic Spiral）—それは成長しても形を変えない、永遠の美の象徴です。オウムガイ、銀河、台風、DNAの二重螺旋—スケールが変わっても同じパターンが現れる「自己相似形（フラクタル）」。黄金比（φ = 1.618…）は、ヒマワリの種の配置、オウムガイの殻、そして銀河の渦巻きにも現れる普遍的比率。ミクロ（種子）とマクロ（銀河）を同じ数学法則で表現し、スケールを超えた生命の本質を示します。'
+        ];
+        
+        // 各ステージの物語・解説（従来版、互換性のため残す）
+        const stageStories = [
+            '', // index 0 is empty
+            '雪深い盛岡の森で、一粒の種子が春を待つ。フィボナッチ数列に従う葉序（Phyllotaxis）パターンは、自然界で最も効率的な配置。137.5°の黄金角が、無限の可能性を秘めた生命の設計図を描く。',
+            '雪解けとともに、種は大地を突き破る。L-systemアルゴリズムが描くフラクタル成長は、単純なルールから複雑な形を生み出す自然の知恵。光へ向かう衝動が、最初の枝分かれを決める。',
+            '風が吹けば、若い唐松は全身で応える。Perlin Noiseが生む有機的な揺らぎは、決して同じパターンを繰り返さない。風との対話が、しなやかで強い幹を育てる。',
+            '100年の歳月が、年輪に刻まれる。春の柔らかな早材、秋の硬い晩材。同心円に記録された気候の記憶は、木材の強度と美しさの源。時間が積層となって価値を生む。',
+            '伐採は終わりではなく、新たな始まり。100年育った木が、人の暮らしを100年支える。ランダムウォークで表現された断面は、変容の瞬間を捉える。役割のバトンタッチ。',
+            'CNCの精密なグリッドと、職人の手による鉋の波紋。デジタルと手仕事が融合する瞬間。蟻継ぎの幾何学は、釘を使わず木と木を結ぶ先人の知恵。新旧の技術が対話する。',
+            '加工で生まれる端材は、廃棄物ではない。ボロノイ図のように領域を分け合い、新たな価値を待つ断片たち。散らばった記憶が、創造的活用によって再び集まる予感。',
+            '土に還る木材を、菌糸のネットワークが分解する。L-systemで広がる地下の循環は、目に見えない森の心臓。分解された養分は、次の生命を育む糧となる。終わりが始まりに。',
+            '一本の唐松の循環が、宇宙の循環と重なる。対数螺旋は、台風も銀河も貫く普遍的な形。星々の間に、新しい種子が散らばる。盛岡の森から、無限のスケールへ。循環は続く。'
         ];
         
         // パーリンノイズ実装
@@ -765,12 +1276,15 @@
                 const angle = i * goldenAngle;
                 const radius = Math.sqrt(i) * (8 + gp * 5);
                 
-                const sx = center + radius * Math.cos(angle);
-                const sy = center + radius * Math.sin(angle);
+                // onで星の位置に揺らぎを追加
+                const noiseX = perlin.get(i * 0.5, noiseOffset) * on * 6;
+                const noiseY = perlin.get(i * 0.5 + 100, noiseOffset) * on * 6;
+                const sx = center + radius * Math.cos(angle) + noiseX;
+                const sy = center + radius * Math.sin(angle) + noiseY;
                 
                 if (sx < 20 || sx > 280 || sy < 20 || sy > 280) continue;
                 
-                const size = 0.3 + Math.random() * 1.2;
+                const size = 0.3 + Math.random() * (1.2 + on * 1.5); // onで星のサイズ変化
                 ctx.beginPath();
                 ctx.arc(sx, sy, size, 0, Math.PI * 2);
                 ctx.fill();
@@ -838,15 +1352,15 @@
             }
             
             // 大きなコッホ雪片（遠景）
-            const largeSnowflakes = Math.floor(3 + gp * 6);
+            const largeSnowflakes = Math.floor(3 + gp * 6 + on * 4); // onで数も変化
             
             for (let i = 0; i < largeSnowflakes; i++) {
-                const x = 60 + Math.random() * 180;
-                const y = 40 + i * 50;
-                const size = 8 + Math.random() * (10 * gp);
-                const depth = Math.floor(1 + gp * 2); // 1-3の再帰深度
+                const x = 60 + Math.random() * 180 + perlin.get(i * 0.3, noiseOffset) * on * 30;
+                const y = 40 + i * 50 + perlin.get(i * 0.3 + 50, noiseOffset) * on * 20;
+                const size = 8 + Math.random() * (10 * gp) + on * 8; // onでサイズ変化
+                const depth = Math.floor(1 + gp * 2 + on); // onで複雑さも変化
                 
-                ctx.lineWidth = 0.3 + Math.random() * 0.4;
+                ctx.lineWidth = 0.3 + Math.random() * 0.4 + on * 0.3; // onで線の太さも変化
                 ctx.save();
                 ctx.translate(x, y);
                 ctx.rotate(Math.random() * Math.PI / 3);
@@ -1205,12 +1719,12 @@
                     for (let j = 0; j <= segments; j++) {
                         const angle = startAngle + (j / segments) * arcLength;
                         
-                        // 有機的な揺らぎ
-                        const wave = Math.sin(angle * 3 + i * 0.8) * 3 * on * energy;
+                        // 有機的な揺らぎ（onが低いと整った円、高いと有機的に）
+                        const wave = Math.sin(angle * 3 + i * 0.8) * 1.5 * on * on * energy;
                         const noise = perlin.get(
                             Math.cos(angle) * i * 0.3,
                             Math.sin(angle) * i * 0.3 + noiseOffset
-                        ) * on * 5;
+                        ) * on * on * 6;
                         
                         const r = baseRadius + wave + noise;
                         const x = center + r * Math.cos(angle);
@@ -1226,7 +1740,7 @@
         
         // 2. 芽 - 量子的跳躍（暗闇から光へ）
         function drawSprout(ctx, center, gp, on, weight) {
-            const groundLevel = center + 30;
+            const groundLevel = center + 50; // 地面を少し下げる
             const goldenAngle = (3 - Math.sqrt(5)) * Math.PI; // 137.5° 黄金角
             
             // === 地下ゾーン: 暗闇の世界 ===
@@ -1241,7 +1755,8 @@
                 ctx.beginPath();
                 
                 for (let x = 30; x <= 270; x += 3) {
-                    const noise = perlin.get(x * 0.04, i * 0.3 + noiseOffset) * on * 6;
+                    // onが低いと整った線、高いと有機的に（係数を抑えめに）
+                    const noise = perlin.get(x * 0.04, i * 0.3 + noiseOffset) * on * on * 4;
                     const finalY = y + noise;
                     
                     if (x === 30) ctx.moveTo(x, finalY);
@@ -1305,7 +1820,8 @@
                 
                 for (let i = 1; i <= segments; i++) {
                     const t = i / segments;
-                    const noise = perlin.get(currentX * 0.05 + generation, currentY * 0.05 + depth) * on * 5;
+                    // onが低いと整った線、高いと有機的に（係数を抑えめに）
+                    const noise = perlin.get(currentX * 0.05 + generation, currentY * 0.05 + depth) * on * on * 3;
                     currentX += (length / segments) * Math.cos(angle) + noise;
                     currentY += (length / segments) * Math.sin(angle) + noise;
                     ctx.lineTo(currentX, currentY);
@@ -1376,7 +1892,7 @@
             
             // === 上昇ゾーン: 芽の跳躍 ===
             
-            const sproutHeight = 90 + gp * 60;
+            const sproutHeight = 70 + gp * 50; // 高さを調整して枠内に収める
             
             // エネルギーの軌跡（残像フレーム）
             const afterglowFrames = Math.floor(5 + on * 8);
@@ -1399,7 +1915,8 @@
                     
                     // 放物線的な加速（a·t²）
                     const acceleration = Math.pow(s, 0.7 + timeOffset * 0.3);
-                    const noise = perlin.get(sx * 0.04 + frame * 0.3, i * 0.5 + noiseOffset) * on * 6;
+                    // onが低いと整った線、高いと有機的に（係数を抑えめに）
+                    const noise = perlin.get(sx * 0.04 + frame * 0.3, i * 0.5 + noiseOffset) * on * on * 4;
                     
                     sx = center + noise;
                     sy = groundLevel - sproutHeight * acceleration;
@@ -1421,7 +1938,8 @@
             for (let i = 1; i <= mainSegments; i++) {
                 const t = i / mainSegments;
                 const acceleration = Math.pow(t, 0.75);
-                const noise = perlin.get(mainX * 0.04, i * 0.5 + noiseOffset) * on * 7;
+                // onが低いと整った線、高いと有機的に（係数を抑えめに）
+                const noise = perlin.get(mainX * 0.04, i * 0.5 + noiseOffset) * on * on * 5;
                 
                 mainX = center + noise;
                 mainY = groundLevel - sproutHeight * acceleration;
@@ -1455,22 +1973,22 @@
             
             // === 地上ゾーン: 光の世界 ===
             
-            // 盛岡の朝日（幾何学的太陽）
-            const sunRadius = 15 + gp * 10;
-            const sunX = 230;
-            const sunY = 60;
+            // 盛岡の朝日（幾何学的太陽）- サイズ調整
+            const sunRadius = 8 + gp * 6; // 小さく調整
+            const sunX = 240; // 少し右に
+            const sunY = 50;  // 少し上に
             
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.arc(sunX, sunY, sunRadius, 0, Math.PI * 2);
             ctx.stroke();
             
             // 太陽からの放射（パラメトリック）
-            const sunRays = Math.floor(8 + gp * 16);
+            const sunRays = Math.floor(6 + gp * 10); // 本数を減らす
             for (let i = 0; i < sunRays; i++) {
                 const angle = (i / sunRays) * Math.PI * 2;
-                const innerR = sunRadius + 5;
-                const outerR = innerR + 15 + gp * 15;
+                const innerR = sunRadius + 3; // 短く
+                const outerR = innerR + 8 + gp * 8; // 短く
                 
                 ctx.lineWidth = 0.4 + gp * 0.6;
                 ctx.beginPath();
@@ -1519,7 +2037,7 @@
                 const segments = 24;
                 for (let j = 0; j <= segments; j++) {
                     const angle = (j / segments) * Math.PI * 2;
-                    const noise = perlin.get(Math.cos(angle) * i * 0.3, Math.sin(angle) * i * 0.3 + noiseOffset) * on * 3;
+                    const noise = perlin.get(Math.cos(angle) * i * 0.3, Math.sin(angle) * i * 0.3 + noiseOffset) * on * 8;
                     
                     const r = radius + noise;
                     const x = tipX + r * Math.cos(angle);
@@ -1559,7 +2077,7 @@
             
             // パーティクルの設定（有機性に応じて密度を変化）
             const numParticles = Math.floor((300 + gp * 1200) * weight); // 300〜1500
-            const numSteps = Math.floor(40 + on * 40); // 40〜80歩
+            const numSteps = Math.floor(40 + on * 30); // 40〜70歩
             const stepLength = 0.6;
             
             // Perlinノイズのスケール（風の大きさ）
@@ -1611,7 +2129,7 @@
             }
             
             // 風による揺れの軌跡（複数フレーム）
-            const swayFrames = Math.floor(6 + on * 10);
+            const swayFrames = Math.floor(6 + on * 15);
             
             for (let frame = 0; frame < swayFrames; frame++) {
                 const t = frame / swayFrames;
@@ -1657,7 +2175,7 @@
                 const wind = getWindForce(center, ty);
                 mainAccumulatedWindX += wind.x * Math.pow(heightRatio, 1.3) * 0.15;
                 
-                const tx = center + mainAccumulatedWindX + perlin.get(center * 0.02, i * 0.25 + noiseOffset) * on * 3;
+                const tx = center + mainAccumulatedWindX + perlin.get(center * 0.02, i * 0.25 + noiseOffset) * on * 8;
                 
                 mainTrunkPoints.push({ x: tx, y: ty, wind: wind });
                 
@@ -1708,7 +2226,7 @@
                         bx = trunkPoint.x + horizontalDist * Math.cos(0) + accumulatedBranchWindX;
                         by = trunkPoint.y - horizontalDist * Math.sin(0) + verticalDist;
                         
-                        bx += perlin.get(bx * 0.04 + b, by * 0.04 + whorl) * on * 3;
+                        bx += perlin.get(bx * 0.04 + b, by * 0.04 + whorl) * on * 8;
                         
                         ctx.lineTo(bx, by);
                     }
@@ -1788,7 +2306,7 @@
                     
                     rx += (rootLength / rootSegments) * Math.cos(rootAngle);
                     ry += (rootLength / rootSegments) * Math.sin(downwardAngle);
-                    rx += perlin.get(rx * 0.03 + r, ry * 0.03) * on * 5;
+                    rx += perlin.get(rx * 0.03 + r, ry * 0.03) * on * 8;
                     
                     ctx.lineTo(rx, ry);
                 }
@@ -1929,7 +2447,7 @@
                 
                 // === 微細な導管パターン（5年おきに強調） ===
                 if (year % 5 === 0 && on > 0.3) {
-                    const vesselCount = Math.floor(20 + on * 40);
+                    const vesselCount = Math.floor(20 + on * 30);
                     for (let v = 0; v < vesselCount; v++) {
                         const angle = (v / vesselCount) * Math.PI * 2 + spiralTwist;
                         const r = currentRadius - ringWidth / 2 + (Math.random() - 0.5) * ringWidth * 0.8;
@@ -1955,13 +2473,13 @@
                           center + centerOffset.y + pithRadius * Math.sin(angle));
                 
                 // 髄線は外側に向かって太く、波打つ
-                const raySegments = Math.floor(30 + on * 40);
+                const raySegments = Math.floor(30 + on * 30);
                 for (let j = 1; j <= raySegments; j++) {
                     const t = j / raySegments;
                     const r = pithRadius + t * (currentRadius - pithRadius);
                     
                     // 年輪を横切るときの波打ち
-                    const wave = perlin.get(i * 1.5, t * 8 + noiseOffset) * on * 2;
+                    const wave = perlin.get(i * 1.5, t * 8 + noiseOffset) * on * 6;
                     const rayAngle = angle + wave * 0.05;
                     
                     const x = center + centerOffset.x + r * Math.cos(rayAngle);
@@ -2004,7 +2522,7 @@
             
             // === 7. 樹皮への移行（最外層） ===
             if (timeEffect > 0.7) {
-                const barkLayers = Math.floor(3 + on * 5);
+                const barkLayers = Math.floor(3 + on * 15);
                 ctx.lineWidth = 0.3;
                 
                 for (let i = 0; i < barkLayers; i++) {
@@ -2034,15 +2552,15 @@
         
         // 5. 木材 - エネルギーの変容（パラメトリック表現）
         function drawTimber(ctx, center, gp, on, weight) {
-            const forestZone = center - 60;
-            const cityZone = center + 60;
+            const forestZone = center - 50 - gp * 10; // gpで左に広がる
+            const cityZone = center + 50 + gp * 10;   // gpで右に広がる
             
             // === 左側: 森の生命エネルギー ===
             
             // 岩手山のシルエット（背景）
-            const mountainBase = 260;
-            const mountainPeak = 60 + (1 - gp * 0.3) * 30; // 成長が高いほど高い山
-            const mountainWidth = 50;
+            const mountainBase = 250;
+            const mountainPeak = 50 + (1 - gp * 0.5) * 40; // gpで山の高さが大きく変化
+            const mountainWidth = 35 + gp * 15; // gpで山の幅が変化
             
             ctx.lineWidth = 0.8;
             ctx.beginPath();
@@ -2052,7 +2570,7 @@
                 const t = i / 20;
                 const x = forestZone - mountainWidth + t * mountainWidth;
                 const y = mountainBase - Math.pow(t, 0.7) * (mountainBase - mountainPeak);
-                const noise = perlin.get(i * 0.3, 0.5 + noiseOffset) * on * 3;
+                const noise = perlin.get(i * 0.3, 0.5 + noiseOffset) * on * 5;
                 ctx.lineTo(x, y + noise);
             }
             // 右斜面
@@ -2060,30 +2578,31 @@
                 const t = i / 20;
                 const x = forestZone + t * mountainWidth;
                 const y = mountainPeak + Math.pow(t, 1.4) * (mountainBase - mountainPeak);
-                const noise = perlin.get((20 + i) * 0.3, 0.5 + noiseOffset) * on * 3;
+                const noise = perlin.get((20 + i) * 0.3, 0.5 + noiseOffset) * on * 8;
                 ctx.lineTo(x, y + noise);
             }
             ctx.stroke();
             
             // 唐松の生命パルス（同心円の波動）
-            const treePosY = 220;
-            const pulseWaves = Math.floor(5 + gp * 12);
+            const treePosY = 150 + on * 8; // 位置を上げて大きな年輪も収まるように
+            const pulseWaves = Math.floor(5 + gp * 10 + on * 3); // gp, onで波の数が変化
             
             for (let i = 0; i < pulseWaves; i++) {
                 const t = i / pulseWaves;
-                const radius = (5 + i * 8) * weight;
-                const opacity = 1 - t * 0.7;
+                const radius = (5 + i * 7 + gp * 4) * weight; // 半径を大きく
+                const opacity = 1 - t * 0.6;
                 
-                ctx.lineWidth = 0.3 + opacity * 1;
+                ctx.lineWidth = 0.4 + opacity * (1 + gp * 0.5 + on * 0.3); // on でも太さ変化
                 ctx.beginPath();
                 
                 const segments = 32;
                 for (let j = 0; j <= segments; j++) {
                     const angle = (j / segments) * Math.PI * 2;
+                    // onが低いと整った円、高いと有機的に
                     const noise = perlin.get(
                         Math.cos(angle) * i * 0.2 + noiseOffset,
                         Math.sin(angle) * i * 0.2
-                    ) * on * 4;
+                    ) * on * on * 5;
                     
                     const r = radius + noise;
                     const x = forestZone + r * Math.cos(angle);
@@ -2097,14 +2616,14 @@
             }
             
             // 針葉の放射パターン（唐松特有）
-            const needleCount = Math.floor(8 + gp * 20);
+            const needleCount = Math.floor(8 + gp * 15 + on * 5); // gp, onで針葉の数が変化
             
             for (let i = 0; i < needleCount; i++) {
                 const angle = (i / needleCount) * Math.PI * 2;
-                const length = 15 + gp * 25;
+                const length = 10 + gp * 15 + on * 8; // gp, onで長さが変化
                 
                 // フーリエ級数的な波（針葉の繊細さ）
-                ctx.lineWidth = 0.2 + Math.random() * 0.4;
+                ctx.lineWidth = 0.2 + Math.random() * (0.3 + gp * 0.3 + on * 0.2); // gp, onで太さ変化
                 ctx.beginPath();
                 
                 const segments = 15;
@@ -2126,19 +2645,19 @@
             }
             
             // 秋の黄葉（波のパターン）
-            const autumnWaves = Math.floor(3 + gp * 6);
+            const autumnWaves = Math.floor(3 + gp * 6 + on * 4); // gp, onで波の数が変化
             
             for (let i = 0; i < autumnWaves; i++) {
-                const baseY = 120 + i * 20;
-                const amplitude = 8 + gp * 12;
+                const baseY = 120 + i * (18 - gp * 5); // gpで間隔が変化
+                const amplitude = 6 + gp * 10 + on * 5; // gp, onで振幅が変化
                 const frequency = 0.15 + i * 0.05;
                 
                 ctx.lineWidth = 0.4 + i * 0.2;
                 ctx.beginPath();
                 
-                for (let x = forestZone - 40; x <= forestZone + 40; x += 2) {
+                for (let x = forestZone - 30; x <= forestZone + 30; x += 2) { // 範囲を縮小
                     const y = baseY + amplitude * Math.sin(x * frequency + i);
-                    const noise = perlin.get(x * 0.05, i * 0.3) * on * 3;
+                    const noise = perlin.get(x * 0.05, i * 0.3) * on * 5;
                     
                     if (x === forestZone - 40) ctx.moveTo(x, y + noise);
                     else ctx.lineTo(x, y + noise);
@@ -2218,12 +2737,12 @@
             const grainLayers = Math.floor(20 + gp * 40);
             
             for (let i = 0; i < grainLayers; i++) {
-                const y = 70 + (i / grainLayers) * 180;
+                const y = 80 + (i / grainLayers) * 160; // 範囲を調整
                 
                 ctx.lineWidth = 0.2 + (i % 5 === 0 ? 0.4 : 0);
                 ctx.beginPath();
                 
-                for (let x = cityZone - 40; x <= cityZone + 40; x += 1) {
+                for (let x = cityZone - 35; x <= cityZone + 35; x += 1) { // 範囲を縮小
                     const freq1 = 0.3;
                     const freq2 = 0.8;
                     const amp1 = 3 * on;
@@ -2474,7 +2993,7 @@
             // 手作業の揺らぎ（onパラメータ）
             if (on > 0.3) {
                 // のこぎりの微細な揺れ
-                const sawMarks = Math.floor(on * 30);
+                const sawMarks = Math.floor(on * 20);
                 ctx.lineWidth = 0.15 + on * 0.2;
                 ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
                 
@@ -2534,7 +3053,7 @@
             }
             
             // 木屑の粒子（CNC切削による）- 密度を減らす
-            const cncChips = Math.floor(8 + on * 60 * weight); // 8〜68個
+            const cncChips = Math.floor(8 + on * 30 * weight); // 8〜38個
             for (let i = 0; i < cncChips; i++) {
                 const angle = Math.random() * Math.PI * 2;
                 const dist = Math.random() * (z2.w / 2);
@@ -2571,7 +3090,7 @@
             const z3 = zones.bottomLeft;
             
             // 鉋（かんな）の軌跡 - 長く連続した波（onで密度が劇的に変化）
-            const planeStrokes = Math.floor(5 + on * 40 * weight); // 5〜45
+            const planeStrokes = Math.floor(5 + on * 25 * weight); // 5〜30
             
             for (let i = 0; i < planeStrokes; i++) {
                 const startY = z3.y + 10 + (i / planeStrokes) * (z3.h - 20);
@@ -2583,8 +3102,8 @@
                     const t = (x - z3.x - 5) / (z3.w - 10);
                     
                     // 鉋の波（手の揺らぎ + 力の強弱）- onで振幅が大きく変化
-                    const breath = Math.sin(t * Math.PI * 3) * on * 4; // 呼吸のリズム強化
-                    const tremor = perlin.get(x * 0.05, i + noiseOffset) * on * 3; // 揺らぎ強化
+                    const breath = Math.sin(t * Math.PI * 3) * on * 6; // 呼吸のリズム強化
+                    const tremor = perlin.get(x * 0.05, i + noiseOffset) * on * 8; // 揺らぎ強化
                     
                     const y = startY + breath + tremor;
                     
@@ -2595,12 +3114,12 @@
             }
             
             // 鑿（のみ）の彫り跡 - V字型（onで数が劇的に変化）
-            const chiselMarks = Math.floor(3 + on * 30 * weight); // 3〜33
+            const chiselMarks = Math.floor(3 + on * 20 * weight); // 3〜23
             
             for (let i = 0; i < chiselMarks; i++) {
                 const cx = z3.x + 15 + Math.random() * (z3.w - 30);
                 const cy = z3.y + 15 + Math.random() * (z3.h - 30);
-                const size = 2 + Math.random() * (5 + on * 8); // サイズも変化
+                const size = 2 + Math.random() * (5 + on * 20); // サイズも変化
                 const angle = Math.random() * Math.PI * 2;
                 
                 ctx.lineWidth = 0.5 + Math.random() * (0.8 + on * 1.5); // 太さも変化
@@ -2963,7 +3482,7 @@
                 const pulledRadius = finalRadius * (1 - pullToCenter * 0.8);
                 
                 // 有機的な揺らぎ
-                const noise = perlin.get(i * 0.3, noiseOffset) * on * 15;
+                const noise = perlin.get(i * 0.3, noiseOffset) * on * 6;
                 
                 const x = center + (pulledRadius + noise) * Math.cos(angle);
                 const y = center + (pulledRadius + noise) * Math.sin(angle);
@@ -3033,7 +3552,7 @@
                         const segments = 20;
                         for (let k = 0; k <= segments; k++) {
                             const a = (k / segments) * Math.PI * 2;
-                            const noise = perlin.get(k * 0.5 + i, j * 0.3) * on * 2;
+                            const noise = perlin.get(k * 0.5 + i, j * 0.3) * on * 6;
                             const px = (r + noise) * Math.cos(a);
                             const py = (r + noise) * Math.sin(a);
                             if (k === 0) ctx.moveTo(px, py);
@@ -3044,13 +3563,13 @@
                         // 黄金比の矩形ブロック（縦長）
                         const w = r * 2;
                         const h = w * phi;
-                        const grainNoise = perlin.get(i * 0.3, j * 0.2) * on * 2;
+                        const grainNoise = perlin.get(i * 0.3, j * 0.2) * on * 6;
                         ctx.rect(-w / 2 + grainNoise, -h / 2, w, h);
                     } else if (fragmentType === 2) {
                         // 黄金比の矩形タイル（横長）
                         const h = r * 2;
                         const w = h * phi;
-                        const grainNoise = perlin.get(i * 0.3, j * 0.2) * on * 2;
+                        const grainNoise = perlin.get(i * 0.3, j * 0.2) * on * 6;
                         ctx.rect(-w / 2, -h / 2 + grainNoise, w, h);
                     } else if (fragmentType === 3) {
                         // 有機的な形状（Perlin noiseベース）
@@ -3060,7 +3579,7 @@
                             const organicNoise = perlin.get(
                                 Math.cos(a) * 0.5 + i * 0.2, 
                                 Math.sin(a) * 0.5 + j * 0.3
-                            ) * on * 5;
+                            ) * on * 8;
                             const radiusVar = r * (1 + organicNoise / r);
                             const px = radiusVar * Math.cos(a);
                             const py = radiusVar * Math.sin(a);
@@ -3073,7 +3592,7 @@
                         const segments = 8;
                         for (let k = 0; k <= segments; k++) {
                             const a = (k / segments) * Math.PI * 1.6; // 約3/4円
-                            const noise = perlin.get(k * 0.5 + i, j * 0.3) * on * 4;
+                            const noise = perlin.get(k * 0.5 + i, j * 0.3) * on * 6;
                             const radiusVar = r + noise + (k % 2) * 3;
                             const px = radiusVar * Math.cos(a);
                             const py = radiusVar * Math.sin(a);
@@ -3125,7 +3644,7 @@
                 const scatter = baseRadius * scatterAmount * (0.8 + Math.random() * 0.4);
                 const finalRadius = baseRadius * 0.3 + scatter;
                 const pulledRadius = finalRadius * (1 - pullToCenter * 0.6);
-                const noise = perlin.get(i * 0.3, noiseOffset) * on * 15;
+                const noise = perlin.get(i * 0.3, noiseOffset) * on * 6;
                 
                 fragmentPositions.push({
                     x: center + (pulledRadius + noise) * Math.cos(angle),
@@ -3169,7 +3688,7 @@
                     // 有機的な曲線で結合
                     const midX = (p1.x + p2.x) / 2;
                     const midY = (p1.y + p2.y) / 2;
-                    const curveOffset = perlin.get(midX * 0.02, midY * 0.02) * on * 15;
+                    const curveOffset = perlin.get(midX * 0.02, midY * 0.02) * on * 6;
                     const perpX = -(p2.y - p1.y) / dist;
                     const perpY = (p2.x - p1.x) / dist;
                     
@@ -3512,7 +4031,7 @@
                 const maxDist = 70 * Math.max(0.2, 1 - decompositionProgress * 0.8); // より小さく
                 const startDist = maxDist * (0.5 + t * 0.5); // より中心に
                 
-                const noise = perlin.get(i * 0.3, angle * 0.2 + noiseOffset) * on * 15;
+                const noise = perlin.get(i * 0.3, angle * 0.2 + noiseOffset) * on * 6;
                 const startX = center + (startDist + noise) * Math.cos(angle);
                 const startY = center + (startDist + noise) * Math.sin(angle);
                 
@@ -3549,7 +4068,7 @@
                         const ft = j / flowSegments;
                         const currentAngle = angle - ft * spiralTurns * Math.PI * 0.4;
                         const currentDist = startDist * (1 - ft * decompositionProgress);
-                        const flowNoise = perlin.get(i * 0.2 + ft * 4, currentAngle + noiseOffset) * on * 18;
+                        const flowNoise = perlin.get(i * 0.2 + ft * 4, currentAngle + noiseOffset) * on * 8;
                         
                         const x = center + (currentDist + flowNoise) * Math.cos(currentAngle);
                         const y = center + (currentDist + flowNoise) * Math.sin(currentAngle);
@@ -3611,7 +4130,7 @@
                         const angleChange = (Math.random() - 0.5) * 0.8;
                         currentAngle += angleChange;
                         
-                        const noise = perlin.get(x * 0.05, y * 0.05) * on * 3;
+                        const noise = perlin.get(x * 0.05, y * 0.05) * on * 8;
                         x += segmentLength * Math.cos(currentAngle) + noise;
                         y += segmentLength * Math.sin(currentAngle) + noise;
                         
@@ -4275,7 +4794,7 @@
                         const spiralNoise = perlin.get(
                             Math.cos(angle) * ms * 0.3 + noiseOffset * 1.5,
                             Math.sin(angle) * ms * 0.3
-                        ) * on * 6; // 削減
+                        ) * on * 20; // 削減
                         
                         const finalR = Math.min(r + spiralNoise, maxRadius);
                         const px = center + finalR * Math.cos(angle);
@@ -4337,18 +4856,6 @@
             generateAllPatterns();
         }
         
-        function saveDesign() {
-            const designData = {
-                growthPower: growthPower,
-                organicNature: organicNature,
-                timeFlow: timeFlow,
-                timestamp: new Date().toISOString()
-            };
-            
-            console.log('デザインデータ:', designData);
-            alert('デザインが保存されました!\n(実装時はサーバーに送信されます)');
-        }
-        
         function downloadImage() {
             const outputCanvas = document.createElement('canvas');
             outputCanvas.width = 900;
@@ -4375,6 +4882,238 @@
             });
         }
         
+        // ========================================
+        // カード画像生成関数（物語の情景＋魔法付き）
+        // ========================================
+        function downloadCardImage() {
+            if (!selectedStage) {
+                alert('ステージを選択してください');
+                return;
+            }
+            
+            const stage = selectedStage;
+            const cardWidth = 600;
+            const cardHeight = 1200; // 完全な魔法説明のため高さを増やす
+            const padding = 30;
+            const imageSize = 360; // コンパクトに
+            
+            // カード用キャンバスを作成
+            const cardCanvas = document.createElement('canvas');
+            cardCanvas.width = cardWidth;
+            cardCanvas.height = cardHeight;
+            const ctx = cardCanvas.getContext('2d');
+            
+            // 背景グラデーション（高級感のある和紙風）
+            const gradient = ctx.createLinearGradient(0, 0, 0, cardHeight);
+            gradient.addColorStop(0, '#f8f6f0');
+            gradient.addColorStop(0.5, '#f5f3ed');
+            gradient.addColorStop(1, '#ebe8e0');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, cardWidth, cardHeight);
+            
+            // 枠線（墨色）
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(15, 15, cardWidth - 30, cardHeight - 30);
+            
+            // 内側の細い枠線
+            ctx.strokeStyle = '#7f8c8d';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(25, 25, cardWidth - 50, cardHeight - 50);
+            
+            // 図柄を配置（中央上部）
+            const sourceCanvas = document.getElementById(`canvas-${stage}`);
+            const imageX = (cardWidth - imageSize) / 2;
+            const imageY = padding + 15;
+            
+            // 図柄の枠
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(imageX - 5, imageY - 5, imageSize + 10, imageSize + 10);
+            
+            // 図柄を描画
+            ctx.drawImage(sourceCanvas, imageX, imageY, imageSize, imageSize);
+            
+            // タイトル
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 26px "Hiragino Mincho ProN", "Yu Mincho", serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(stageNames[stage], cardWidth / 2, imageY + imageSize + 40);
+            
+            // サブタイトル（英語）
+            const englishTitles = [
+                '', 'Seed', 'Sprout', 'Sapling', 'Growth', 
+                'Timber', 'Processing', 'Scrap', 'Regeneration', 'Future'
+            ];
+            ctx.font = '14px "Helvetica Neue", Arial, sans-serif';
+            ctx.fillStyle = '#7f8c8d';
+            ctx.fillText(`Stage ${stage}: ${englishTitles[stage]}`, cardWidth / 2, imageY + imageSize + 60);
+            
+            // === 物語の情景 ===
+            ctx.strokeStyle = '#bdc3c7';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padding + 20, imageY + imageSize + 78);
+            ctx.lineTo(cardWidth - padding - 20, imageY + imageSize + 78);
+            ctx.stroke();
+            
+            // 物語の情景ラベル
+            let textY = imageY + imageSize + 98;
+            ctx.fillStyle = '#5d6d7e';
+            ctx.font = 'bold 12px "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('【物語の情景】', padding + 10, textY);
+            
+            // 物語の情景テキスト（自動改行）
+            textY += 20;
+            ctx.fillStyle = '#34495e';
+            ctx.font = '13px "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif';
+            
+            const scene = stageScenes[stage];
+            const maxWidth = cardWidth - padding * 2 - 20;
+            const lineHeight = 20;
+            
+            // テキストを行に分割（物語の情景）
+            let line = '';
+            for (let i = 0; i < scene.length; i++) {
+                const testLine = line + scene[i];
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && line !== '') {
+                    ctx.fillText(line, padding + 10, textY);
+                    line = scene[i];
+                    textY += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, padding + 10, textY);
+            
+            // === 使われている魔法 ===
+            textY += lineHeight + 15;
+            ctx.strokeStyle = '#d4af37'; // 金色の区切り線
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(padding + 20, textY);
+            ctx.lineTo(cardWidth - padding - 20, textY);
+            ctx.stroke();
+            
+            // 魔法ラベル
+            textY += 20;
+            ctx.fillStyle = '#8b6914';
+            ctx.font = 'bold 12px "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('🔮 使われている魔法', padding + 10, textY);
+            
+            // 魔法タグ
+            textY += 18;
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 12px "Helvetica Neue", Arial, sans-serif';
+            ctx.fillText(stageMagicTags[stage], padding + 10, textY);
+            
+            // 魔法の説明
+            textY += 22;
+            ctx.fillStyle = '#5d6d7e';
+            ctx.font = '12px "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif';
+            
+            const magicDesc = stageMagicDesc[stage];
+            line = '';
+            for (let i = 0; i < magicDesc.length; i++) {
+                const testLine = line + magicDesc[i];
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && line !== '') {
+                    ctx.fillText(line, padding + 10, textY);
+                    line = magicDesc[i];
+                    textY += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, padding + 10, textY);
+            
+            // === パラメータ情報 ===
+            textY += lineHeight + 10;
+            ctx.strokeStyle = '#bdc3c7';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padding + 20, textY);
+            ctx.lineTo(cardWidth - padding - 20, textY);
+            ctx.stroke();
+            
+            textY += 16;
+            ctx.font = '11px "Helvetica Neue", Arial, sans-serif';
+            ctx.fillStyle = '#95a5a6';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Growth: ${growthPower}%  |  Organic: ${organicNature}%  |  Time: ${timeFlow}`, cardWidth / 2, textY);
+            
+            // === フッター（コンテンツに続く位置） ===
+            textY += 30;
+            ctx.font = '11px "Helvetica Neue", Arial, sans-serif';
+            ctx.fillStyle = '#bdc3c7';
+            ctx.fillText('唐松の一生 - 盛岡の森が語る物語', cardWidth / 2, textY);
+            
+            textY += 14;
+            ctx.font = '10px "Helvetica Neue", Arial, sans-serif';
+            ctx.fillText('Karamatsu Lifecycle Interactive Designer', cardWidth / 2, textY);
+            
+            textY += 14;
+            ctx.font = '10px "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif';
+            ctx.fillStyle = '#95a5a6';
+            ctx.fillText('© ima Design Lab｜松森木工所', cardWidth / 2, textY);
+            
+            // カードの実際の高さを計算し、キャンバスをリサイズ
+            const actualCardHeight = textY + 40; // 下余白（1行分追加）
+            
+            // 新しいキャンバスを作成して適切なサイズで再描画
+            const finalCanvas = document.createElement('canvas');
+            finalCanvas.width = cardWidth;
+            finalCanvas.height = actualCardHeight;
+            const finalCtx = finalCanvas.getContext('2d');
+            
+            // 背景を再描画
+            const finalGradient = finalCtx.createLinearGradient(0, 0, 0, actualCardHeight);
+            finalGradient.addColorStop(0, '#f8f6f0');
+            finalGradient.addColorStop(0.5, '#f5f3ed');
+            finalGradient.addColorStop(1, '#ebe8e0');
+            finalCtx.fillStyle = finalGradient;
+            finalCtx.fillRect(0, 0, cardWidth, actualCardHeight);
+            
+            // 元のキャンバスの内容をコピー
+            finalCtx.drawImage(cardCanvas, 0, 0);
+            
+            // 枠線を再描画（新しい高さに合わせて）
+            finalCtx.strokeStyle = '#2c3e50';
+            finalCtx.lineWidth = 3;
+            finalCtx.strokeRect(15, 15, cardWidth - 30, actualCardHeight - 30);
+            finalCtx.strokeStyle = '#7f8c8d';
+            finalCtx.lineWidth = 1;
+            finalCtx.strokeRect(25, 25, cardWidth - 50, actualCardHeight - 50);
+            
+            // 最終キャンバスを使用
+            const outputCanvas = finalCanvas;
+            
+            // 画像として保存（動的サイズのキャンバスを使用）
+            outputCanvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `karamatsu_stage${stage}_card.png`;
+                
+                // スマホ対応: クリックイベントをシミュレート
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                // iOSの場合は新しいタブで開く（ダウンロードできない場合の代替）
+                if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    // Blobを新しいウィンドウで表示
+                    window.open(url, '_blank');
+                    alert('📱 画像が新しいタブで開きました。\n長押しして「画像を保存」を選択してください。');
+                } else {
+                    URL.revokeObjectURL(url);
+                }
+            }, 'image/png');
+        }
+        
         // パラメータ表示を更新する関数
         function updateParamDisplay() {
             document.getElementById('param-gp-display').textContent = growthPower;
@@ -4389,19 +5128,24 @@
             // 全てのcanvasのハイライトを解除
             for (let i = 1; i <= 9; i++) {
                 const canvas = document.getElementById(`canvas-${i}`);
-                canvas.parentElement.style.border = 'none';
+                const cell = canvas.parentElement;
+                cell.classList.remove('selected');
+                cell.style.border = '3px solid #34495e'; // デフォルトに戻す
             }
             
-            // 選択されたcanvasをハイライト
+            // 選択されたcanvasをハイライト（新しいクラスを使用）
             const selectedCanvas = document.getElementById(`canvas-${stageNumber}`);
-            selectedCanvas.parentElement.style.border = '4px solid #e67e22';
-            selectedCanvas.parentElement.style.borderRadius = '10px';
+            const selectedCell = selectedCanvas.parentElement;
+            selectedCell.classList.add('selected');
             
             // 選択中のステージ名を更新
             document.getElementById('selected-stage-name').textContent = stageNames[stageNumber];
             
             // ダウンロードボタンを有効化
             document.getElementById('svg-download-btn').disabled = false;
+            
+            // 比較用に現在の状態を保存
+            saveForCompare();
         }
         
         // Canvas要素にクリックイベントを追加
@@ -4530,26 +5274,59 @@
             alert(`📋 Google Formsを開きました！\n\n【パラメータ情報】\n${paramInfo}\n\nFormsに入力してください。`);
         }
         
-        // パラメータスライダーの変更を監視
+        // ========================================
+        // パフォーマンス最適化: デバウンス & requestAnimationFrame
+        // ========================================
+        
+        let renderTimeout = null;
+        let isRendering = false;
+        
+        // デバウンス付きの描画スケジューラー
+        function scheduleRender() {
+            // 既存のタイムアウトをクリア
+            if (renderTimeout) {
+                clearTimeout(renderTimeout);
+            }
+            
+            // 50ms後に描画を実行（連続入力中は延期）
+            renderTimeout = setTimeout(() => {
+                if (isRendering) return;
+                
+                isRendering = true;
+                requestAnimationFrame(() => {
+                    try {
+                        generateAllPatterns();
+                    } catch (error) {
+                        console.error('描画エラー:', error);
+                    } finally {
+                        isRendering = false;
+                        renderTimeout = null;
+                    }
+                });
+            }, 50);
+        }
+        
+        // 即時描画（値表示のみ即座に更新、描画はデバウンス）
+        function updateSliderValue(sliderId, valueId, value, suffix = '') {
+            document.getElementById(valueId).textContent = value + suffix;
+            updateParamDisplay();
+            scheduleRender();
+        }
+        
+        // パラメータスライダーの変更を監視（最適化版）
         document.getElementById('growth-power').addEventListener('input', (e) => {
             growthPower = parseInt(e.target.value);
-            document.getElementById('growth-value').textContent = growthPower + '%';
-            updateParamDisplay();
-            generateAllPatterns();
+            updateSliderValue('growth-power', 'growth-value', growthPower, '%');
         });
         
         document.getElementById('organic-nature').addEventListener('input', (e) => {
             organicNature = parseInt(e.target.value);
-            document.getElementById('organic-value').textContent = organicNature + '%';
-            updateParamDisplay();
-            generateAllPatterns();
+            updateSliderValue('organic-nature', 'organic-value', organicNature, '%');
         });
         
         document.getElementById('time-flow').addEventListener('input', (e) => {
             timeFlow = parseInt(e.target.value);
-            document.getElementById('time-value').textContent = timeFlow;
-            updateParamDisplay();
-            generateAllPatterns();
+            updateSliderValue('time-flow', 'time-value', timeFlow, '');
         });
         
         // 初期化
