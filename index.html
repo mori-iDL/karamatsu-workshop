@@ -5262,16 +5262,32 @@
         
         // Google Formsを開く関数
         function openGoogleForms() {
-            const formsURL = 'https://forms.gle/VoKPj8Gxz8Qa9B4i6';
+            // ステージが選択されていない場合は警告
+            if (!selectedStage) {
+                alert('⚠️ まずステージを選択してください！\n\n9つの図柄から1つをタップして選んでください。');
+                return;
+            }
             
-            // パラメータ情報をクリップボードにコピー
-            const paramInfo = `ステージ: ${selectedStage ? selectedStage : '未選択'}\n成長の力強さ: ${growthPower}\n有機的な自然性: ${organicNature}\n時間の流れ: ${timeFlow}`;
+            // Google Forms のベースURL
+            const baseURL = 'https://docs.google.com/forms/d/e/1FAIpQLSculJGoaf-RFp6xwAu9f0uO5ZA-iI2UnG5Vh2TJ_4erQs0e5A/viewform';
+            
+            // ステージ名（Google Formsのドロップダウンに合わせる）
+            const stageName = stageNames[selectedStage];
+            
+            // URLパラメータを構築
+            const params = new URLSearchParams({
+                'usp': 'pp_url',
+                'entry.1770126510': stageName,           // ステージ番号
+                'entry.494646067': growthPower,          // 成長の力強さ
+                'entry.268095774': organicNature,        // 有機的な自然性
+                'entry.939822168': timeFlow              // 時間の流れ
+            });
+            
+            // 完全なURLを生成
+            const formsURL = `${baseURL}?${params.toString()}`;
             
             // 新しいタブでFormsを開く
             window.open(formsURL, '_blank');
-            
-            // パラメータ情報を表示
-            alert(`📋 Google Formsを開きました！\n\n【パラメータ情報】\n${paramInfo}\n\nFormsに入力してください。`);
         }
         
         // ========================================
