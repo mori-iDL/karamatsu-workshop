@@ -296,29 +296,77 @@
             }
             
             input[type="range"]::-webkit-slider-thumb {
-                width: 36px;
-                height: 36px;
+                width: 28px;
+                height: 28px;
             }
             
             input[type="range"]::-moz-range-thumb {
-                width: 36px;
-                height: 36px;
+                width: 28px;
+                height: 28px;
             }
             
             .control-group {
-                padding: 10px 0;
+                padding: 5px 0;
             }
             
             .preset-btn {
-                padding: 15px 12px;
-                font-size: 13px;
+                padding: 10px 8px;
+                font-size: 11px;
+                min-width: auto;
+                flex: 1;
+            }
+            
+            .preset-buttons {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+                margin-bottom: 10px;
+            }
+            
+            .preset-btn {
+                padding: 8px 4px;
+                font-size: 10px;
+                min-width: auto;
+                white-space: nowrap;
+            }
+            
+            .random-btn {
+                grid-column: 1 / -1;
+                padding: 10px;
+                font-size: 12px;
             }
             
             .param-help {
-                width: 28px;
-                height: 28px;
-                line-height: 28px;
+                width: 20px;
+                height: 20px;
+                line-height: 20px;
+                font-size: 11px;
+                margin-left: 4px;
+            }
+            
+            .tooltip {
+                font-size: 11px;
+                padding: 10px;
+                max-width: 250px;
+            }
+            
+            .compare-section {
+                padding: 12px;
+                margin-top: 10px;
+            }
+            
+            .compare-section h4 {
                 font-size: 14px;
+                margin-bottom: 10px;
+            }
+            
+            .compare-box canvas {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .compare-arrow {
+                font-size: 20px;
             }
         }
         
@@ -570,24 +618,15 @@
                 top: 0;
                 background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
                 z-index: 100;
-                padding: 15px;
-                margin: -10px -10px 15px -10px;
-                border-bottom: 3px solid #28a745;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-                border-radius: 0 0 12px 12px;
+                padding: 10px;
+                margin: -10px -10px 10px -10px;
+                border-bottom: 2px solid #28a745;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                border-radius: 0 0 10px 10px;
             }
             
             .controls::before {
-                content: "📱 パラメータ調整パネル";
-                display: block;
-                font-size: 12px;
-                font-weight: bold;
-                color: #28a745;
-                margin-bottom: 10px;
-                text-align: center;
-                background: rgba(40, 167, 69, 0.1);
-                padding: 4px 8px;
-                border-radius: 6px;
+                display: none;
             }
             
             .control-group {
