@@ -935,6 +935,32 @@
         // 選択されたステージを管理
         let selectedStage = null;
         
+        // ========================================
+        // シード付き疑似乱数生成器（Mulberry32）
+        // Canvas表示とSVG生成で同じ乱数列を再現するため
+        // ========================================
+        let currentSeed = 12345;
+        let randomState = currentSeed;
+        
+        function setSeed(seed) {
+            randomState = seed;
+        }
+        
+        function seededRandom() {
+            randomState |= 0;
+            randomState = randomState + 0x6D2B79F5 | 0;
+            let t = Math.imul(randomState ^ randomState >>> 15, 1 | randomState);
+            t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+            return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        }
+        
+        // 描画開始時にシードをリセットするための関数
+        function resetRandomForStage(stageNumber) {
+            // ステージ番号とパラメータからシードを生成（同じパラメータなら同じ結果）
+            const seed = stageNumber * 10000 + growthPower * 100 + organicNature + Math.floor(timeFlow + 100);
+            setSeed(seed);
+        }
+        
         // ビフォーアフター比較用の状態保存
         let savedState = null;
         
@@ -1191,7 +1217,7 @@
             }
             
             rand_vect() {
-                let theta = Math.random() * 2 * Math.PI;
+                let theta = seededRandom() * 2 * Math.PI;
                 return {x: Math.cos(theta), y: Math.sin(theta)};
             }
             
@@ -1304,6 +1330,8 @@
         
         // 1. 種 - 結晶化する時間（統合版）
         function drawSeed(ctx, center, gp, on, weight) {
+            // シードをリセット（同じパラメータなら同じ結果を保証）
+            resetRandomForStage(1);
             
             // === 背景: 盛岡の冬の夜空 ===
             
@@ -1323,13 +1351,13 @@
                 
                 if (sx < 20 || sx > 280 || sy < 20 || sy > 280) continue;
                 
-                const size = 0.3 + Math.random() * (1.2 + on * 1.5); // onで星のサイズ変化
+                const size = 0.3 + seededRandom() * (1.2 + on * 1.5); // onで星のサイズ変化
                 ctx.beginPath();
                 ctx.arc(sx, sy, size, 0, Math.PI * 2);
                 ctx.fill();
                 
                 // 明るい星には十字光
-                if (size > 1 && Math.random() > 0.7) {
+                if (size > 1 && seededRandom() > 0.7) {
                     const crossSize = size * 3;
                     ctx.lineWidth = 0.2;
                     ctx.beginPath();
@@ -1394,15 +1422,15 @@
             const largeSnowflakes = Math.floor(3 + gp * 6 + on * 4); // onで数も変化
             
             for (let i = 0; i < largeSnowflakes; i++) {
-                const x = 60 + Math.random() * 180 + perlin.get(i * 0.3, noiseOffset) * on * 30;
+                const x = 60 + seededRandom() * 180 + perlin.get(i * 0.3, noiseOffset) * on * 30;
                 const y = 40 + i * 50 + perlin.get(i * 0.3 + 50, noiseOffset) * on * 20;
-                const size = 8 + Math.random() * (10 * gp) + on * 8; // onでサイズ変化
+                const size = 8 + seededRandom() * (10 * gp) + on * 8; // onでサイズ変化
                 const depth = Math.floor(1 + gp * 2 + on); // onで複雑さも変化
                 
-                ctx.lineWidth = 0.3 + Math.random() * 0.4 + on * 0.3; // onで線の太さも変化
+                ctx.lineWidth = 0.3 + seededRandom() * 0.4 + on * 0.3; // onで線の太さも変化
                 ctx.save();
                 ctx.translate(x, y);
-                ctx.rotate(Math.random() * Math.PI / 3);
+                ctx.rotate(seededRandom() * Math.PI / 3);
                 drawKochSnowflake(0, 0, size, depth);
                 ctx.restore();
             }
@@ -1411,17 +1439,17 @@
             const smallSnowflakes = Math.floor(25 + gp * 60 * weight);
             
             for (let i = 0; i < smallSnowflakes; i++) {
-                const x = 30 + Math.random() * 240;
+                const x = 30 + seededRandom() * 240;
                 const y = 30 + (i / smallSnowflakes) * 240;
-                const size = 1.5 + Math.random() * (2 + gp * 3);
-                const rotation = Math.random() * Math.PI / 3;
+                const size = 1.5 + seededRandom() * (2 + gp * 3);
+                const rotation = seededRandom() * Math.PI / 3;
                 
                 ctx.save();
                 ctx.translate(x, y);
                 ctx.rotate(rotation);
                 
                 const arms = 6;
-                ctx.lineWidth = 0.2 + Math.random() * 0.3;
+                ctx.lineWidth = 0.2 + seededRandom() * 0.3;
                 
                 for (let j = 0; j < arms; j++) {
                     const angle = (j / arms) * Math.PI * 2;
@@ -1459,8 +1487,8 @@
             
             for (let i = 0; i < voronoiSeeds; i++) {
                 voronoiPoints.push({
-                    x: 50 + Math.random() * 200,
-                    y: 100 + Math.random() * 120
+                    x: 50 + seededRandom() * 200,
+                    y: 100 + seededRandom() * 120
                 });
             }
             
@@ -1714,19 +1742,19 @@
             for (let i = 0; i < quantumFluctuations; i++) {
                 const angle = (i / quantumFluctuations) * Math.PI * 2 + noiseOffset;
                 const r = seedRadius + (3 + gp * 5) + Math.sin(angle * 3 + noiseOffset * 2) * 6 * on;
-                const length = (4 + gp * 8) + Math.random() * (8 * on);
+                const length = (4 + gp * 8) + seededRandom() * (8 * on);
                 
                 const x1 = center + r * Math.cos(angle);
                 const y1 = center + r * Math.sin(angle);
                 
                 // 外向きと内向きの両方
                 const direction = (i % 2 === 0 ? 1 : -1);
-                const fluctAngle = angle + (Math.random() - 0.5) * Math.PI / 4;
+                const fluctAngle = angle + (seededRandom() - 0.5) * Math.PI / 4;
                 
                 const x2 = x1 + length * Math.cos(fluctAngle) * direction;
                 const y2 = y1 + length * Math.sin(fluctAngle) * direction;
                 
-                ctx.lineWidth = 0.3 + Math.random() * (0.5 + gp * 0.3);
+                ctx.lineWidth = 0.3 + seededRandom() * (0.5 + gp * 0.3);
                 ctx.beginPath();
                 ctx.moveTo(x1, y1);
                 ctx.lineTo(x2, y2);
@@ -1750,7 +1778,7 @@
                 
                 for (let p = 0; p < pulseCount; p++) {
                     const startAngle = (p / pulseCount) * Math.PI * 2;
-                    const arcLength = (Math.PI / (pulseCount * 0.8)) * (0.6 + Math.random() * 0.4);
+                    const arcLength = (Math.PI / (pulseCount * 0.8)) * (0.6 + seededRandom() * 0.4);
                     
                     ctx.beginPath();
                     
@@ -1779,6 +1807,9 @@
         
         // 2. 芽 - 量子的跳躍（暗闇から光へ）
         function drawSprout(ctx, center, gp, on, weight) {
+            // シードをリセット（同じパラメータなら同じ結果を保証）
+            resetRandomForStage(2);
+            
             const groundLevel = center + 50; // 地面を少し下げる
             const goldenAngle = (3 - Math.sqrt(5)) * Math.PI; // 137.5° 黄金角
             
@@ -1816,12 +1847,12 @@
                 const startX = 40;
                 const endX = 260;
                 const cp1x = 100;
-                const cp1y = startY + (Math.random() - 0.5) * 30 * on;
+                const cp1y = startY + (seededRandom() - 0.5) * 30 * on;
                 const cp2x = 200;
-                const cp2y = startY + (Math.random() - 0.5) * 30 * on;
+                const cp2y = startY + (seededRandom() - 0.5) * 30 * on;
                 
                 ctx.moveTo(startX, startY);
-                ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, startY + (Math.random() - 0.5) * 20);
+                ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, startY + (seededRandom() - 0.5) * 20);
                 ctx.stroke();
                 
                 // 水滴（生命の源）
@@ -1837,7 +1868,7 @@
                     const py = dt * dt * dt * startY + 
                               3 * dt * dt * t * cp1y + 
                               3 * dt * t * t * cp2y + 
-                              t * t * t * (startY + (Math.random() - 0.5) * 20);
+                              t * t * t * (startY + (seededRandom() - 0.5) * 20);
                     
                     ctx.beginPath();
                     ctx.arc(px, py, 0.8, 0, Math.PI * 2);
@@ -1871,13 +1902,13 @@
                 if (depth === maxDepth) {
                     const mycoCount = Math.floor(2 + gp * 4);
                     for (let m = 0; m < mycoCount; m++) {
-                        const mycoAngle = Math.random() * Math.PI * 2;
-                        const mycoR = 3 + Math.random() * 5;
+                        const mycoAngle = seededRandom() * Math.PI * 2;
+                        const mycoR = 3 + seededRandom() * 5;
                         const mx = currentX + mycoR * Math.cos(mycoAngle);
                         const my = currentY + mycoR * Math.sin(mycoAngle);
                         
                         ctx.beginPath();
-                        ctx.arc(mx, my, 0.5 + Math.random() * 1, 0, Math.PI * 2);
+                        ctx.arc(mx, my, 0.5 + seededRandom() * 1, 0, Math.PI * 2);
                         ctx.fill();
                     }
                 }
@@ -1887,10 +1918,10 @@
                     const branchAngle1 = angle - (Math.PI / 6 + goldenAngle * 0.1);
                     const branchAngle2 = angle + (Math.PI / 6 + goldenAngle * 0.1);
                     
-                    if (Math.random() > 0.25) {
+                    if (seededRandom() > 0.25) {
                         drawLSystemRoot(currentX, currentY, branchAngle1, length * 0.75, depth + 1, maxDepth, generation);
                     }
-                    if (Math.random() > 0.25) {
+                    if (seededRandom() > 0.25) {
                         drawLSystemRoot(currentX, currentY, branchAngle2, length * 0.72, depth + 1, maxDepth, generation);
                     }
                 }
@@ -2042,9 +2073,9 @@
             for (let band = 0; band < spectrumBands; band++) {
                 const startY = 40 + band * 3;
                 const angle = -Math.PI / 3 + band * 0.05;
-                const length = 30 + Math.random() * (40 * gp);
+                const length = 30 + seededRandom() * (40 * gp);
                 
-                ctx.lineWidth = 0.2 + Math.random() * 0.5;
+                ctx.lineWidth = 0.2 + seededRandom() * 0.5;
                 ctx.beginPath();
                 
                 const startX = sunX - sunRadius;
@@ -2098,9 +2129,9 @@
             const photons = Math.floor(20 + gp * 50 * weight);
             
             for (let i = 0; i < photons; i++) {
-                const x = 50 + Math.random() * 200;
-                const y = 30 + Math.random() * (groundLevel - 60);
-                const size = 0.3 + Math.random() * 1.2;
+                const x = 50 + seededRandom() * 200;
+                const y = 30 + seededRandom() * (groundLevel - 60);
+                const size = 0.3 + seededRandom() * 1.2;
                 
                 ctx.beginPath();
                 ctx.arc(x, y, size, 0, Math.PI * 2);
@@ -2110,6 +2141,9 @@
         
         // 3. 若木 - 風に揺れる生命（Perlinフロー）
         function drawSapling(ctx, center, gp, on, weight) {
+            // シードをリセット（同じパラメータなら同じ結果を保証）
+            resetRandomForStage(3);
+            
             const goldenAngle = (3 - Math.sqrt(5)) * Math.PI; // 137.5°
             
             // === Perlinノイズフロー（pattern_27/28風の表現） ===
@@ -2125,10 +2159,10 @@
             // 各パーティクルの軌跡を描画
             for (let p = 0; p < numParticles; p++) {
                 // ランダムな開始位置
-                let x = 20 + Math.random() * 260;
-                let y = 20 + Math.random() * 260;
+                let x = 20 + seededRandom() * 260;
+                let y = 20 + seededRandom() * 260;
                 
-                ctx.lineWidth = 0.15 + Math.random() * 0.2;
+                ctx.lineWidth = 0.15 + seededRandom() * 0.2;
                 ctx.beginPath();
                 ctx.moveTo(x, y);
                 
@@ -2355,6 +2389,9 @@
         
         // 4. 成長 - 100年の記憶を刻む年輪（統合版）
         function drawGrowth(ctx, center, gp, on, weight) {
+            // シードをリセット（同じパラメータなら同じ結果を保証）
+            resetRandomForStage(4);
+            
             // === 時間の影響を反転（過去=若い=細い、未来=成熟=太い） ===
             // stage 4では weight が逆になっているので修正
             const timeEffect = 2 - weight; // weightが0.67(未来)→1.33、weightが1.33(過去)→0.67
@@ -2365,8 +2402,8 @@
             
             // 中心のわずかなずれ（成長の非対称性）
             const centerOffset = {
-                x: (Math.random() - 0.5) * 12 * on,
-                y: (Math.random() - 0.5) * 12 * on
+                x: (seededRandom() - 0.5) * 12 * on,
+                y: (seededRandom() - 0.5) * 12 * on
             };
             
             // === 1. 中心の髄（pith）===
@@ -2382,7 +2419,7 @@
             const pithSegments = 12;
             for (let i = 0; i <= pithSegments; i++) {
                 const angle = (i / pithSegments) * Math.PI * 2;
-                const r = pithRadius + (Math.random() - 0.5) * 2;
+                const r = pithRadius + (seededRandom() - 0.5) * 2;
                 const x = center + centerOffset.x + r * Math.cos(angle);
                 const y = center + centerOffset.y + r * Math.sin(angle);
                 if (i === 0) ctx.moveTo(x, y);
@@ -2489,12 +2526,12 @@
                     const vesselCount = Math.floor(20 + on * 30);
                     for (let v = 0; v < vesselCount; v++) {
                         const angle = (v / vesselCount) * Math.PI * 2 + spiralTwist;
-                        const r = currentRadius - ringWidth / 2 + (Math.random() - 0.5) * ringWidth * 0.8;
+                        const r = currentRadius - ringWidth / 2 + (seededRandom() - 0.5) * ringWidth * 0.8;
                         const vx = center + centerOffset.x + r * Math.cos(angle);
                         const vy = center + centerOffset.y + r * Math.sin(angle);
                         
                         ctx.beginPath();
-                        ctx.arc(vx, vy, 0.2 + Math.random() * 0.4, 0, Math.PI * 2);
+                        ctx.arc(vx, vy, 0.2 + seededRandom() * 0.4, 0, Math.PI * 2);
                         ctx.fill();
                     }
                 }
@@ -2505,7 +2542,7 @@
             ctx.lineWidth = 0.1 + on * 0.15; // より細く
             
             for (let i = 0; i < numRays; i++) {
-                const angle = (i / numRays) * Math.PI * 2 + Math.random() * 0.1;
+                const angle = (i / numRays) * Math.PI * 2 + seededRandom() * 0.1;
                 
                 ctx.beginPath();
                 ctx.moveTo(center + centerOffset.x + pithRadius * Math.cos(angle), 
@@ -2535,9 +2572,9 @@
                 ctx.lineWidth = 0.4 + gp * 0.5; // さらに細く調整
                 
                 for (let i = 0; i < numCracks; i++) {
-                    const angle = Math.random() * Math.PI * 2;
-                    const startR = currentRadius * (0.85 + Math.random() * 0.1);
-                    const endR = currentRadius * (0.95 + Math.random() * 0.08);
+                    const angle = seededRandom() * Math.PI * 2;
+                    const startR = currentRadius * (0.85 + seededRandom() * 0.1);
+                    const endR = currentRadius * (0.95 + seededRandom() * 0.08);
                     
                     ctx.beginPath();
                     ctx.moveTo(center + centerOffset.x + startR * Math.cos(angle),
@@ -2548,7 +2585,7 @@
                     for (let j = 1; j <= crackSegments; j++) {
                         const t = j / crackSegments;
                         const r = startR + t * (endR - startR);
-                        const wobble = (Math.random() - 0.5) * 0.15;
+                        const wobble = (seededRandom() - 0.5) * 0.15;
                         const crackAngle = angle + wobble;
                         
                         const x = center + centerOffset.x + r * Math.cos(crackAngle);
@@ -2591,6 +2628,9 @@
         
         // 5. 木材 - エネルギーの変容（パラメトリック表現）
         function drawTimber(ctx, center, gp, on, weight) {
+            // シードをリセット（同じパラメータなら同じ結果を保証）
+            resetRandomForStage(5);
+            
             const forestZone = center - 50 - gp * 10; // gpで左に広がる
             const cityZone = center + 50 + gp * 10;   // gpで右に広がる
             
@@ -2662,7 +2702,7 @@
                 const length = 10 + gp * 15 + on * 8; // gp, onで長さが変化
                 
                 // フーリエ級数的な波（針葉の繊細さ）
-                ctx.lineWidth = 0.2 + Math.random() * (0.3 + gp * 0.3 + on * 0.2); // gp, onで太さ変化
+                ctx.lineWidth = 0.2 + seededRandom() * (0.3 + gp * 0.3 + on * 0.2); // gp, onで太さ変化
                 ctx.beginPath();
                 
                 const segments = 15;
@@ -2711,9 +2751,9 @@
             
             for (let i = 0; i < flowCount; i++) {
                 const startY = 50 + (i / flowCount) * 200;
-                const curvature = (Math.random() - 0.5) * 40 * on;
+                const curvature = (seededRandom() - 0.5) * 40 * on;
                 
-                ctx.lineWidth = 0.2 + Math.random() * (0.8 * gp);
+                ctx.lineWidth = 0.2 + seededRandom() * (0.8 * gp);
                 ctx.beginPath();
                 ctx.moveTo(forestZone + 20, startY);
                 
@@ -2723,7 +2763,7 @@
                 const cp2x = cityZone - 30;
                 const cp2y = startY - curvature;
                 const endX = cityZone - 20;
-                const endY = startY + (Math.random() - 0.5) * 20;
+                const endY = startY + (seededRandom() - 0.5) * 20;
                 
                 ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
                 ctx.stroke();
@@ -2734,16 +2774,16 @@
             
             for (let i = 0; i < particles; i++) {
                 const t = i / particles;
-                const x = center + (Math.random() - 0.5) * 30;
+                const x = center + (seededRandom() - 0.5) * 30;
                 const y = 60 + t * 190;
                 
                 // 螺旋運動する粒子
                 const spiralAngle = t * Math.PI * 4;
-                const spiralRadius = (Math.random() - 0.5) * 15 * on;
+                const spiralRadius = (seededRandom() - 0.5) * 15 * on;
                 const px = x + spiralRadius * Math.cos(spiralAngle);
                 const py = y;
                 
-                const size = 0.5 + Math.random() * 1.5 * gp;
+                const size = 0.5 + seededRandom() * 1.5 * gp;
                 
                 ctx.beginPath();
                 ctx.arc(px, py, size, 0, Math.PI * 2);
@@ -2879,6 +2919,9 @@
         
         // 6. 加工 - 時系列の加工プロセス（統合版）
         function drawProcessing(ctx, center, gp, on, weight) {
+            // シードをリセット（同じパラメータなら同じ結果を保証）
+            resetRandomForStage(6);
+            
             // === 画面を4分割するゾーン ===
             const zones = {
                 topLeft: { x: 30, y: 30, w: 120, h: 120 },    // 原木の断面
@@ -3037,11 +3080,11 @@
                 ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
                 
                 for (let i = 0; i < sawMarks; i++) {
-                    const angle = Math.random() * Math.PI * 2;
-                    const dist = Math.random() * logRadius * 0.8;
+                    const angle = seededRandom() * Math.PI * 2;
+                    const dist = seededRandom() * logRadius * 0.8;
                     const x = ringCenterX + dist * Math.cos(angle);
                     const y = ringCenterY + dist * Math.sin(angle);
-                    const len = 2 + Math.random() * 4;
+                    const len = 2 + seededRandom() * 4;
                     
                     ctx.beginPath();
                     ctx.moveTo(x - len, y);
@@ -3094,11 +3137,11 @@
             // 木屑の粒子（CNC切削による）- 密度を減らす
             const cncChips = Math.floor(8 + on * 30 * weight); // 8〜38個
             for (let i = 0; i < cncChips; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const dist = Math.random() * (z2.w / 2);
+                const angle = seededRandom() * Math.PI * 2;
+                const dist = seededRandom() * (z2.w / 2);
                 const x = cncCenterX + dist * Math.cos(angle);
                 const y = cncCenterY + dist * Math.sin(angle);
-                const size = 0.2 + Math.random() * (0.8 + on * 1.2); // サイズも調整
+                const size = 0.2 + seededRandom() * (0.8 + on * 1.2); // サイズも調整
                 
                 ctx.beginPath();
                 ctx.arc(x, y, size, 0, Math.PI * 2);
@@ -3134,7 +3177,7 @@
             for (let i = 0; i < planeStrokes; i++) {
                 const startY = z3.y + 10 + (i / planeStrokes) * (z3.h - 20);
                 
-                ctx.lineWidth = 0.3 + Math.random() * (0.4 + on * 1.2); // 太さも変化
+                ctx.lineWidth = 0.3 + seededRandom() * (0.4 + on * 1.2); // 太さも変化
                 ctx.beginPath();
                 
                 for (let x = z3.x + 5; x <= z3.x + z3.w - 5; x += 1.5) {
@@ -3156,12 +3199,12 @@
             const chiselMarks = Math.floor(3 + on * 20 * weight); // 3〜23
             
             for (let i = 0; i < chiselMarks; i++) {
-                const cx = z3.x + 15 + Math.random() * (z3.w - 30);
-                const cy = z3.y + 15 + Math.random() * (z3.h - 30);
-                const size = 2 + Math.random() * (5 + on * 20); // サイズも変化
-                const angle = Math.random() * Math.PI * 2;
+                const cx = z3.x + 15 + seededRandom() * (z3.w - 30);
+                const cy = z3.y + 15 + seededRandom() * (z3.h - 30);
+                const size = 2 + seededRandom() * (5 + on * 20); // サイズも変化
+                const angle = seededRandom() * Math.PI * 2;
                 
-                ctx.lineWidth = 0.5 + Math.random() * (0.8 + on * 1.5); // 太さも変化
+                ctx.lineWidth = 0.5 + seededRandom() * (0.8 + on * 1.5); // 太さも変化
                 ctx.beginPath();
                 
                 const x1 = cx + size * Math.cos(angle - Math.PI / 6);
@@ -3179,14 +3222,14 @@
             const shavings = Math.floor(2 + gp * 20 * weight); // 2〜22
             
             for (let i = 0; i < shavings; i++) {
-                const startX = z3.x + 20 + Math.random() * (z3.w - 40);
-                const startY = z3.y + 20 + Math.random() * (z3.h - 40);
+                const startX = z3.x + 20 + seededRandom() * (z3.w - 40);
+                const startY = z3.y + 20 + seededRandom() * (z3.h - 40);
                 
-                ctx.lineWidth = 0.2 + Math.random() * (0.3 + on * 0.8); // 太さも変化
+                ctx.lineWidth = 0.2 + seededRandom() * (0.3 + on * 0.8); // 太さも変化
                 ctx.beginPath();
                 
-                const spiralTurns = 1.5 + Math.random() * (2 + gp * 4); // 複雑さ増加
-                const spiralRadius = 4 + Math.random() * (8 + gp * 10); // サイズも増加
+                const spiralTurns = 1.5 + seededRandom() * (2 + gp * 4); // 複雑さ増加
+                const spiralRadius = 4 + seededRandom() * (8 + gp * 10); // サイズも増加
                 const points = 30;
                 
                 for (let j = 0; j <= points; j++) {
@@ -3495,6 +3538,9 @@
         
         // 7. 端材 - 散らばる記憶、集まる予感（統合版）
         function drawScrap(ctx, center, gp, on, weight) {
+            // シードをリセット（同じパラメータなら同じ結果を保証）
+            resetRandomForStage(7);
+            
             // === 時間による物語の変化（強調版） ===
             // weight < 1: 切断直後、外側に散らばる（過去）
             // weight = 1: 最大散乱状態（現在）
@@ -3514,7 +3560,7 @@
                 const baseRadius = 40 + t * 100; // より外側（30→40、90→100）
                 
                 // 時間による散らばり（より大きく散らばる）
-                const scatter = baseRadius * scatterAmount * (1.2 + Math.random() * 0.6);
+                const scatter = baseRadius * scatterAmount * (1.2 + seededRandom() * 0.6);
                 const finalRadius = baseRadius * 0.2 + scatter; // より散らばる
                 
                 // 未来への引き寄せ（Stage 8への予感）- 引力を強化
@@ -3537,8 +3583,8 @@
                     ctx.moveTo(originX, originY);
                     
                     // ベジェ曲線で自然な軌跡
-                    const cpx = (originX + x) / 2 + (Math.random() - 0.5) * 30 * on;
-                    const cpy = (originY + y) / 2 + (Math.random() - 0.5) * 30 * on;
+                    const cpx = (originX + x) / 2 + (seededRandom() - 0.5) * 30 * on;
+                    const cpy = (originY + y) / 2 + (seededRandom() - 0.5) * 30 * on;
                     ctx.quadraticCurveTo(cpx, cpy, x, y);
                     ctx.stroke();
                     ctx.strokeStyle = 'black';
@@ -3546,7 +3592,7 @@
                 
                 // === 端材の形状とサイズ（多様なバリエーション） ===
                 // 確率的に形状を選択（ブロックは10%のみ）
-                const rand = Math.random();
+                const rand = seededRandom();
                 let fragmentType;
                 if (rand < 0.1) {
                     fragmentType = 1; // ブロック（10%）
@@ -3558,8 +3604,8 @@
                     fragmentType = 4; // 不規則な破片（35%）
                 }
                 
-                const size = (6 + Math.random() * 20 + t * 12) * (0.5 + gp * 0.5);
-                const rotationAngle = angle + Math.random() * Math.PI;
+                const size = (6 + seededRandom() * 20 + t * 12) * (0.5 + gp * 0.5);
+                const rotationAngle = angle + seededRandom() * Math.PI;
                 
                 // 黄金比
                 const phi = (1 + Math.sqrt(5)) / 2;
@@ -3647,12 +3693,12 @@
                     const numSubFragments = Math.floor(2 + gp * 4);
                     for (let sub = 0; sub < numSubFragments; sub++) {
                         const subAngle = (sub / numSubFragments) * Math.PI * 2;
-                        const subDist = size * 0.7 + Math.random() * size * 0.3;
+                        const subDist = size * 0.7 + seededRandom() * size * 0.3;
                         const subX = subDist * Math.cos(subAngle);
                         const subY = subDist * Math.sin(subAngle);
-                        const subSize = size * (0.15 + Math.random() * 0.15);
+                        const subSize = size * (0.15 + seededRandom() * 0.15);
                         
-                        ctx.strokeStyle = `rgba(0, 0, 0, ${0.4 + Math.random() * 0.3})`;
+                        ctx.strokeStyle = `rgba(0, 0, 0, ${0.4 + seededRandom() * 0.3})`;
                         ctx.lineWidth = 0.3;
                         ctx.beginPath();
                         
@@ -3680,7 +3726,7 @@
                 const t = i / numFragments;
                 const angle = i * goldenAngle;
                 const baseRadius = 30 + t * 90;
-                const scatter = baseRadius * scatterAmount * (0.8 + Math.random() * 0.4);
+                const scatter = baseRadius * scatterAmount * (0.8 + seededRandom() * 0.4);
                 const finalRadius = baseRadius * 0.3 + scatter;
                 const pulledRadius = finalRadius * (1 - pullToCenter * 0.6);
                 const noise = perlin.get(i * 0.3, noiseOffset) * on * 6;
@@ -4028,13 +4074,13 @@
                 const chipX = center + (chipRadius + chipNoise + drift - pullEffect) * Math.cos(chipAngle);
                 const chipY = center + (chipRadius + chipNoise + drift - pullEffect) * Math.sin(chipAngle);
                 
-                const chipSize = 0.5 + Math.random() * (1 + gp * 1.5);
+                const chipSize = 0.5 + seededRandom() * (1 + gp * 1.5);
                 
                 // 小さな線分として描画
-                ctx.strokeStyle = `rgba(0, 0, 0, ${0.2 + Math.random() * 0.3})`;
+                ctx.strokeStyle = `rgba(0, 0, 0, ${0.2 + seededRandom() * 0.3})`;
                 ctx.lineWidth = chipSize;
                 ctx.beginPath();
-                const chipLen = 1 + Math.random() * 3;
+                const chipLen = 1 + seededRandom() * 3;
                 ctx.moveTo(chipX, chipY);
                 ctx.lineTo(chipX + chipLen * Math.cos(chipAngle), chipY + chipLen * Math.sin(chipAngle));
                 ctx.stroke();
@@ -4045,6 +4091,9 @@
         
         // 8. 再生 - 循環の完結（土へ還り、新たな生命へ）統合版
         function drawRegeneration(ctx, center, gp, on, weight) {
+            // シードをリセット（同じパラメータなら同じ結果を保証）
+            resetRandomForStage(8);
+            
             // === 時間による物語の変化 ===
             // 過去でも豊かな状態を表現するため、時間を大胆にリマップ
             // weight=0で既に半分分解が進んでいる状態から開始
@@ -4133,9 +4182,9 @@
                     const microbeX = center + (radius + microbeNoise + drift) * Math.cos(angle);
                     const microbeY = center + (radius + microbeNoise + drift) * Math.sin(angle);
                     
-                    const microbeSize = 0.3 + Math.random() * (1 + gp * 1.2) * decompositionProgress;
+                    const microbeSize = 0.3 + seededRandom() * (1 + gp * 1.2) * decompositionProgress;
                     
-                    ctx.fillStyle = `rgba(0, 0, 0, ${0.2 + Math.random() * 0.3})`;
+                    ctx.fillStyle = `rgba(0, 0, 0, ${0.2 + seededRandom() * 0.3})`;
                     ctx.beginPath();
                     ctx.arc(microbeX, microbeY, microbeSize, 0, Math.PI * 2);
                     ctx.fill();
@@ -4150,7 +4199,7 @@
                 
                 for (let i = 0; i < numHyphae; i++) {
                     const startAngle = (i / numHyphae) * Math.PI * 2;
-                    const startRadius = 20 + Math.random() * 25;
+                    const startRadius = 20 + seededRandom() * 25;
                     
                     let x = center + startRadius * Math.cos(startAngle);
                     let y = center + startRadius * Math.sin(startAngle);
@@ -4165,8 +4214,8 @@
                     const segments = Math.floor(8 + gp * 12);
                     
                     for (let j = 0; j < segments; j++) {
-                        const segmentLength = 4 + Math.random() * 8;
-                        const angleChange = (Math.random() - 0.5) * 0.8;
+                        const segmentLength = 4 + seededRandom() * 8;
+                        const angleChange = (seededRandom() - 0.5) * 0.8;
                         currentAngle += angleChange;
                         
                         const noise = perlin.get(x * 0.05, y * 0.05) * on * 8;
@@ -4176,7 +4225,7 @@
                         ctx.lineTo(x, y);
                         
                         // 分岐（確率的）
-                        if (Math.random() < 0.2 && j < segments - 2) {
+                        if (seededRandom() < 0.2 && j < segments - 2) {
                             ctx.stroke();
                             ctx.beginPath();
                             ctx.moveTo(x, y);
@@ -4374,6 +4423,9 @@
         
         // 9. 未来 - 循環の宇宙スケール（種子から銀河へ）統合版
         function drawFuture(ctx, center, gp, on, weight) {
+            // シードをリセット（同じパラメータなら同じ結果を保証）
+            resetRandomForStage(9);
+            
             // === キャンバスのクリッピング範囲を設定 ===
             // キャンバスサイズ280x280、中心140なので、安全範囲は中心から±115
             const canvasSize = 280;
@@ -4461,7 +4513,7 @@
                 
                 for (let n = 0; n < numNebulae; n++) {
                     const nebulaAngle = (n / numNebulae) * Math.PI * 2 + goldenAngle * n;
-                    const nebulaDist = Math.min(40 + Math.random() * 50 * expansionProgress, maxRadius * 0.7); // 制限
+                    const nebulaDist = Math.min(40 + seededRandom() * 50 * expansionProgress, maxRadius * 0.7); // 制限
                     const nebulaX = center + nebulaDist * Math.cos(nebulaAngle);
                     const nebulaY = center + nebulaDist * Math.sin(nebulaAngle);
                     
@@ -4471,7 +4523,7 @@
                     
                     for (let p = 0; p < cloudPoints; p++) {
                         const cloudAngle = (p / cloudPoints) * Math.PI * 2;
-                        const cloudR = nebulaSize * Math.sqrt(Math.random()) * (0.8 + on * 0.4);
+                        const cloudR = nebulaSize * Math.sqrt(seededRandom()) * (0.8 + on * 0.4);
                         const cloudNoise = perlin.get(
                             nebulaX * 0.01 + cloudR * 0.1,
                             nebulaY * 0.01 + p * 0.05 + noiseOffset
@@ -4480,8 +4532,8 @@
                         const px = nebulaX + (cloudR + cloudNoise) * Math.cos(cloudAngle);
                         const py = nebulaY + (cloudR + cloudNoise) * Math.sin(cloudAngle);
                         
-                        const dotSize = 0.3 + Math.random() * (0.5 + gpDynamic * 1.2);
-                        ctx.fillStyle = `rgba(0, 0, 0, ${0.15 + Math.random() * 0.25})`;
+                        const dotSize = 0.3 + seededRandom() * (0.5 + gpDynamic * 1.2);
+                        ctx.fillStyle = `rgba(0, 0, 0, ${0.15 + seededRandom() * 0.25})`;
                         ctx.beginPath();
                         ctx.arc(px, py, dotSize, 0, Math.PI * 2);
                         ctx.fill();
@@ -4496,7 +4548,7 @@
             
             for (let i = 0; i < starDensity; i++) {
                 // フィボナッチ配置と腕に沿った配置の混合
-                const useFibonacci = Math.random() < 0.35; // 35%はフィボナッチ
+                const useFibonacci = seededRandom() < 0.35; // 35%はフィボナッチ
                 
                 let x, y;
                 
@@ -4505,7 +4557,7 @@
                     const angle = i * goldenAngle;
                     let radius = Math.sqrt(i) * (6 + gpDynamic * 8) * expansionProgress; // 削減
                     radius = Math.min(radius, maxRadius * 0.9); // 制限
-                    const scatter = (Math.random() - 0.5) * 10 * on; // 削減
+                    const scatter = (seededRandom() - 0.5) * 10 * on; // 削減
                     
                     const finalR = Math.min(radius + scatter, maxRadius);
                     x = center + finalR * Math.cos(angle);
@@ -4520,8 +4572,8 @@
                     let r = radius * Math.exp(spiralTightness * angle / phi);
                     r = Math.min(r, maxRadius * 0.9); // 制限
                     
-                    const scatter = (Math.random() - 0.5) * (15 + on * 20); // 削減
-                    const scatterAngle = Math.random() * Math.PI * 2;
+                    const scatter = (seededRandom() - 0.5) * (15 + on * 20); // 削減
+                    const scatterAngle = seededRandom() * Math.PI * 2;
                     
                     const finalR = Math.min(r + scatter, maxRadius);
                     x = center + finalR * Math.cos(angle + scatterAngle);
@@ -4529,15 +4581,15 @@
                 }
                 
                 // 星のサイズ（新しい種子）
-                const starSize = 0.4 + Math.random() * (0.6 + gpDynamic * 2.5);
+                const starSize = 0.4 + seededRandom() * (0.6 + gpDynamic * 2.5);
                 
-                ctx.fillStyle = `rgba(0, 0, 0, ${0.5 + Math.random() * 0.5})`;
+                ctx.fillStyle = `rgba(0, 0, 0, ${0.5 + seededRandom() * 0.5})`;
                 ctx.beginPath();
                 ctx.arc(x, y, starSize, 0, Math.PI * 2);
                 ctx.fill();
                 
                 // 明るい星（回折十字・Stage 1のエコー）
-                if (starSize > 1.3 && Math.random() > (1 - gpDynamic * 0.6)) {
+                if (starSize > 1.3 && seededRandom() > (1 - gpDynamic * 0.6)) {
                     const crossSize = starSize * (2 + gpDynamic * 1.5);
                     ctx.strokeStyle = `rgba(0, 0, 0, ${0.4 + gpDynamic * 0.4})`;
                     ctx.lineWidth = 0.25 + gpDynamic * 0.6;
@@ -4689,7 +4741,7 @@
                     
                     const distance = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
                     if (distance < 80) {
-                        ctx.strokeStyle = `rgba(0, 0, 0, ${0.08 + Math.random() * 0.12})`;
+                        ctx.strokeStyle = `rgba(0, 0, 0, ${0.08 + seededRandom() * 0.12})`;
                         ctx.lineWidth = 0.2 + gpDynamic * 0.5;
                         
                         ctx.beginPath();
@@ -4752,7 +4804,7 @@
                     const waveAngle = (w / numWaves) * Math.PI * 2;
                     const waveRadius = Math.min(35 + w * (6 + gpDynamic * 8) * expansionProgress, maxRadius * 0.85); // 制限
                     
-                    ctx.strokeStyle = `rgba(0, 0, 0, ${0.08 + Math.random() * 0.12})`;
+                    ctx.strokeStyle = `rgba(0, 0, 0, ${0.08 + seededRandom() * 0.12})`;
                     ctx.lineWidth = 0.2 + gpDynamic * 0.4;
                     ctx.beginPath();
                     
@@ -4783,7 +4835,7 @@
             
             for (let v = 0; v < miniVortexes; v++) {
                 const vortexAngle = (v / Math.max(1, miniVortexes)) * Math.PI * 2;
-                const vortexDist = Math.min((35 + Math.random() * 25), maxRadius * 0.6); // 制限
+                const vortexDist = Math.min((35 + seededRandom() * 25), maxRadius * 0.6); // 制限
                 const vx = center + vortexDist * Math.cos(vortexAngle);
                 const vy = center + vortexDist * Math.sin(vortexAngle);
                 
@@ -4854,10 +4906,10 @@
                 ctx.lineWidth = 0.15 + on * 0.4;
                 
                 for (let i = 0; i < connections; i++) {
-                    const angle1 = Math.random() * Math.PI * 2;
-                    const angle2 = Math.random() * Math.PI * 2;
-                    const dist1 = Math.min(20 + Math.random() * (80 * expansionProgress), maxRadius * 0.85); // 制限
-                    const dist2 = Math.min(20 + Math.random() * (80 * expansionProgress), maxRadius * 0.85); // 制限
+                    const angle1 = seededRandom() * Math.PI * 2;
+                    const angle2 = seededRandom() * Math.PI * 2;
+                    const dist1 = Math.min(20 + seededRandom() * (80 * expansionProgress), maxRadius * 0.85); // 制限
+                    const dist2 = Math.min(20 + seededRandom() * (80 * expansionProgress), maxRadius * 0.85); // 制限
                     
                     const x1 = center + dist1 * Math.cos(angle1);
                     const y1 = center + dist1 * Math.sin(angle1);
@@ -4884,7 +4936,7 @@
         }
         
         function generateAllPatterns() {
-            noiseOffset = Math.random() * 10000;
+            noiseOffset = seededRandom() * 10000;
             for (let stage = 1; stage <= 9; stage++) {
                 const canvas = document.getElementById(`canvas-${stage}`);
                 generatePattern(canvas, stage, growthPower, organicNature, timeFlow);
