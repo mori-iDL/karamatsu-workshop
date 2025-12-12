@@ -1209,16 +1209,29 @@
             '一本の唐松の循環が、宇宙の循環と重なる。対数螺旋は、台風も銀河も貫く普遍的な形。星々の間に、新しい種子が散らばる。盛岡の森から、無限のスケールへ。循環は続く。'
         ];
         
-        // パーリンノイズ実装
+        // パーリンノイズ実装（決定論的バージョン）
         class PerlinNoise {
             constructor() {
                 this.gradients = {};
                 this.memory = {};
             }
             
-            rand_vect() {
-                let theta = seededRandom() * 2 * Math.PI;
+            // 座標から決定論的にグラディエントを生成（seededRandomを使わない）
+            // これにより、呼び出し順序に依存しない一貫した結果が得られる
+            rand_vect_deterministic(vx, vy) {
+                // 座標からハッシュ値を生成
+                const hash = this.hash2D(vx, vy);
+                const theta = hash * 2 * Math.PI;
                 return {x: Math.cos(theta), y: Math.sin(theta)};
+            }
+            
+            // 2D座標から0-1の範囲のハッシュ値を生成
+            hash2D(x, y) {
+                // シンプルなハッシュ関数（決定論的）
+                let h = x * 374761393 + y * 668265263;
+                h = (h ^ (h >> 13)) * 1274126177;
+                h = h ^ (h >> 16);
+                return (h >>> 0) / 4294967296;
             }
             
             dot_prod_grid(x, y, vx, vy) {
@@ -1229,7 +1242,8 @@
                 if (this.gradients[grid_key]) {
                     g_vect = this.gradients[grid_key];
                 } else {
-                    g_vect = this.rand_vect();
+                    // 決定論的なグラディエント生成
+                    g_vect = this.rand_vect_deterministic(vx, vy);
                     this.gradients[grid_key] = g_vect;
                 }
                 
@@ -1267,7 +1281,12 @@
             }
         }
         
-        const perlin = new PerlinNoise();
+        let perlin = new PerlinNoise();
+        
+        // Perlin Noiseのキャッシュをリセットする関数
+        function resetPerlinNoise() {
+            perlin = new PerlinNoise();
+        }
         
         document.getElementById('growth-power').addEventListener('input', (e) => {
             growthPower = parseInt(e.target.value);
@@ -4936,6 +4955,9 @@
         }
         
         function generateAllPatterns() {
+            // ★重要: Perlin Noiseのキャッシュをリセット
+            resetPerlinNoise();
+            
             // noiseOffsetはパラメータに基づいて決定論的に生成
             // これによりCanvas描画とSVG生成で同じnoiseOffsetが使われる
             setSeed(42); // 固定シードでnoiseOffsetを生成
@@ -5260,7 +5282,11 @@
                     throw new Error('canvas2svg ライブラリが読み込まれていません');
                 }
                 
-                // ★重要: Canvas描画と同じnoiseOffsetを再現
+                // ★重要: Canvas描画と完全に同じ状態を再現
+                // 1. Perlin Noiseのキャッシュをリセット
+                resetPerlinNoise();
+                
+                // 2. シードとnoiseOffsetをCanvas描画と同じ値に設定
                 setSeed(42);
                 noiseOffset = seededRandom() * 10000;
                 
