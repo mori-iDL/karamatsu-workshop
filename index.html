@@ -5266,16 +5266,21 @@
                 
                 // 39mm×39mm（C3面取り後のサイズ）
                 const svgSize = 39; // mm
-                const pixelSize = 400; // ピクセル（高解像度）
+                // ★重要: Canvas描画と同じサイズを使用（描画関数内のハードコード座標との整合性）
+                const pixelSize = 300; // Canvas描画と同じサイズ
                 
                 // canvas2svgコンテキストを作成（ベクターパス生成）
                 const ctx = new C2S(pixelSize, pixelSize);
                 
-                // 背景は透明（レーザー加工用）
+                // ★重要: generatePattern と同じコンテキスト設定
+                ctx.strokeStyle = 'black';
+                ctx.fillStyle = 'black';
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
                 
                 // パターンを描画
-                // ★重要: generatePattern と同じ計算式を使用
-                const center = pixelSize / 2;
+                // ★重要: generatePattern と完全に同じ計算式・サイズを使用
+                const center = pixelSize / 2; // 150 (Canvas描画と同じ)
                 const gpNorm = growthPower / 100;
                 const onNorm = organicNature / 100;
                 const tfNorm = timeFlow / 100;
@@ -5284,6 +5289,8 @@
                 const gpEffect = Math.pow(gpNorm, 1.3);
                 const onEffect = Math.pow(onNorm, 0.8);
                 const weight = 1 + (tfNorm * (stageNumber - 5) / 3);
+                
+                ctx.save();
                 
                 // 選択されたステージを描画（ベクターパスとして）
                 switch(stageNumber) {
